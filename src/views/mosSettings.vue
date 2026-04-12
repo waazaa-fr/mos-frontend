@@ -325,7 +325,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" href="https://github.com/ich777/mos-docs/" target="_blank" rel="noopener" color="primary">
+                  <v-list-item rounded="lg" href="https://docs.mos-official.net" target="_blank" rel="noopener" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-help-circle" class="mr-3"></v-icon>
                     </template>
