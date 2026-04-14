@@ -1408,8 +1408,10 @@
   "recreate certificates": "Zertifikate neu erstellen",
   "raw value": "Rohwert",
   "certificate could not be downloaded": "Zertifikat konnte nicht heruntergeladen werden",
-  "download root ca": "Root CA herunterladen",
+  "download root certificate": "Root Zertifikat herunterladen",
   "download certificate": "Zertifikat herunterladen",
   "download": "Herunterladen",
-  "file could not be downloaded": "Datei konnte nicht heruntergeladen werden"
+  "file could not be downloaded": "Datei konnte nicht heruntergeladen werden",
+  "are you sure you want to recreate the certificates": "Bist du sicher, dass du die Zertifikate neu erstellen möchtest",
+  "recreate": "Neu erstellen"
 }

@@ -1408,8 +1408,10 @@
   "recreate certificates": "Recreate Certificates",
   "raw value": "Raw value",
   "certificate could not be downloaded": "Certificate could not be downloaded",
-  "download root ca": "Download Root CA",
+  "download root certificate": "Download Root Certificate",
   "download certificate": "Download Certificate",
   "download": "Download",
-  "file could not be downloaded": "File could not be downloaded"
+  "file could not be downloaded": "File could not be downloaded",
+  "are you sure you want to recreate the certificates": "Are you sure you want to recreate the certificates",
+  "recreate": "Recreate"
 }

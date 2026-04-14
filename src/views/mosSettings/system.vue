@@ -24,9 +24,17 @@
             <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('web ui') }}</span>
             <v-switch :label="$t('https enabled')" color="green" inset v-model="settingsSystem.webui.https_enabled" density="compact" class="pt-4 pb-4" hide-details="auto"></v-switch>
-            <v-btn color="primary" variant="outlined" @click="openShowCertificatesDialog()" :disabled="!settingsSystem.webui.https_enabled">{{ $t('show certificates') }}</v-btn>
-            <v-btn color="primary" variant="outlined" class="ml-2" @click="recreateCertificates()" :disabled="!settingsSystem.webui.https_enabled">{{ $t('recreate certificates') }}</v-btn>
-            <v-btn color="primary" variant="outlined" class="ml-2" @click="downloadCertificate()" :disabled="!settingsSystem.webui.https_enabled">{{ $t('download root ca') }}</v-btn>
+            <v-row class="ga-2">
+              <v-col cols="12" sm="auto">
+              <v-btn color="primary" variant="outlined" @click="openShowCertificatesDialog()" :disabled="!settingsSystem.webui.https_enabled" block>{{ $t('show certificates') }}</v-btn>
+              </v-col>
+              <v-col cols="12" sm="auto">
+              <v-btn color="primary" variant="outlined" @click="recreateCertificatesDialog.value = true" :disabled="!settingsSystem.webui.https_enabled" block>{{ $t('recreate certificates') }}</v-btn>
+              </v-col>
+              <v-col cols="12" sm="auto">
+              <v-btn color="primary" variant="outlined" @click="downloadCertificate()" :disabled="!settingsSystem.webui.https_enabled" block>{{ $t('download root certificate') }}</v-btn>
+              </v-col>
+            </v-row>
             <v-text-field class="mt-6" :label="$t('http port')" type="number" v-model="settingsSystem.webui.ports.http"></v-text-field>
             <v-text-field :label="$t('https port')" type="number" v-model="settingsSystem.webui.ports.https"></v-text-field>
             <v-text-field :label="$t('local dns searchname')" v-model="settingsSystem.webui.local_dns_searchname" class="mb-4" hide-details="auto"></v-text-field>
@@ -208,7 +216,22 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="showCertificatesDialog.value = false">{{ $t('close') }}</v-btn>
+        <v-btn color="onPrimary" text @click="showCertificatesDialog.value = false">{{ $t('close') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Recreate Certificates Dialog -->
+  <v-dialog v-model="recreateCertificatesDialog.value" max-width="600px">
+    <v-card :title="$t('recreate certificates')" prepend-icon="mdi-certificate">
+      <v-card-text>
+        <p>{{ $t('are you sure you want to recreate the certificates') }}?</p>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="onPrimary" text @click="recreateCertificatesDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="recreateCertificates()">{{ $t('recreate') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -365,6 +388,9 @@ const showCertificatesDialog = reactive({
       file: '',
     },
   },
+});
+const recreateCertificatesDialog = reactive({
+  value: false,
 });
 let dateTimeInterval = null;
 

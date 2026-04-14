@@ -18,12 +18,10 @@
           <v-progress-circular v-if="loading" indeterminate size="20" color="secondary" />
         </div>
       </v-card-subtitle>
-
       <v-card-text class="pt-2" style="min-height: 300px; max-height: 60vh; overflow-y: auto">
         <v-alert v-if="errorMessage" type="error" density="compact" class="mb-2">
           {{ errorMessage }}
         </v-alert>
-
         <v-table density="compact">
           <thead>
             <tr>
@@ -38,7 +36,6 @@
                 {{ t('no entries') }}
               </td>
             </tr>
-
             <tr
               v-for="item in items"
               :key="item.path"
@@ -65,9 +62,7 @@
           </tbody>
         </v-table>
       </v-card-text>
-
       <v-divider />
-
       <v-card-actions class="d-flex align-center">
         <div class="text-caption text-truncate" style="max-width: 60%">
           <strong>{{ t('selected') }}:</strong>
@@ -122,6 +117,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  includeHidden: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'selected', 'cancel']);
@@ -141,6 +140,7 @@ const canGoUp = ref(false);
 const parentPath = ref(null);
 const errorMessage = ref('');
 const activeItem = ref(null);
+const includeHidden = ref(props.includeHidden);
 
 const loadPath = async (path = '/') => {
   loading.value = true;
@@ -156,6 +156,9 @@ const loadPath = async (path = '/') => {
 
     if (props.roots !== '' && props.roots !== '/') {
       url.searchParams.set('roots', props.roots);
+    }
+    if (includeHidden.value) {
+      url.searchParams.set('includeHidden', 'true');
     }
 
     const res = await fetch(url.toString(), {
@@ -256,7 +259,7 @@ watch(
       const startPath = props.initialPath || '/';
       loadPath(startPath);
     }
-  }
+  },
 );
 </script>
 
