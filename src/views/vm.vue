@@ -329,7 +329,21 @@
           <div class="d-flex align-items-center mb-2">
             <h3 class="text-h6">{{ $t('VirtIO Drivers') }}</h3>
           </div>
-          <v-select v-model="newVm.virtioIso" :items="virtioIsoOptions" item-title="title" item-value="value" :label="$t('VirtIO ISO')" variant="outlined" density="compact" clearable hide-details />
+          <v-select
+            v-model="newVm.virtioIso"
+            :items="virtioIsoOptions"
+            item-title="title"
+            item-value="value"
+            :label="$t('VirtIO ISO')"
+            variant="outlined"
+            density="compact"
+            clearable
+            hide-details
+            append-icon="mdi-download"
+            @click:append="downloadVirtioIso()"
+            append-inner-icon="mdi-refresh"
+            @click:append-inner="getVmCapabilities()"
+          />
         </div>
         <v-divider class="my-4" />
 
@@ -452,7 +466,7 @@
         </div>
       </v-card-text>
       <v-divider />
-      <v-card-actions  style="flex-shrink: 0">
+      <v-card-actions style="flex-shrink: 0">
         <v-btn @click="createVmDialog = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="primary" @click="createVM()">{{ $t('create') }}</v-btn>
       </v-card-actions>
@@ -589,7 +603,6 @@
               <v-col cols="12" md="3">
                 <v-text-field v-model="disk.size" :label="$t('size')" variant="outlined" density="compact" hide-details placeholder="20G" />
               </v-col>
-
               <v-col cols="12" md="3">
                 <v-select v-model="disk.bus" :items="vmCapabilities.diskBuses" :label="$t('bus')" variant="outlined" density="compact" hide-details />
               </v-col>
@@ -784,7 +797,6 @@
             </v-row>
           </v-card>
         </div>
-        
       </v-card-text>
       <v-divider />
       <v-card-actions style="flex-shrink: 0">
@@ -1024,7 +1036,7 @@
         <v-list-item-title>{{ $t('create vm') }}</v-list-item-title>
       </v-list-item>
     </v-list>
-  </v-menu>  
+  </v-menu>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -1038,6 +1050,7 @@ import { useI18n } from 'vue-i18n';
 import { io } from 'socket.io-client';
 import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
 import xmlEditor from '@/components/xmlEditor.vue';
+import { useRouter } from 'vue-router';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const vms = ref([]);
@@ -1047,9 +1060,7 @@ const { t } = useI18n();
 const vmsloading = ref(true);
 const isConnected = ref(false);
 const error = ref(null);
-
-let socket = null;
-
+const router = useRouter();
 const vmCapabilities = ref({
   vdisk_directory: '',
   qemuPath: '',
@@ -1142,6 +1153,8 @@ const pcieDevices = ref({});
 const usbDevices = ref({});
 const availableSystemMemory = ref(0);
 const cpu = ref({});
+
+let socket = null;
 
 onMounted(() => {
   getVMs();
@@ -2210,6 +2223,10 @@ const editVM = async () => {
   } finally {
     overlay.value = false;
   }
+};
+
+const downloadVirtioIso = async () => {
+  window.open('/mosSettings/vm', '_blank');
 };
 </script>
 

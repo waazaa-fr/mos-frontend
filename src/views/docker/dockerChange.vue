@@ -473,9 +473,6 @@
 
 <script setup>
 import { ref, onMounted, reactive, nextTick } from 'vue';
-
-let _uidCounter = 0;
-const uid = () => ++_uidCounter;
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -515,6 +512,8 @@ const form = reactive({
   gpus: [],
   labels: [],
 });
+let _uidCounter = 0;
+const uid = () => ++_uidCounter;
 
 const props = defineProps({
   docker: String,
