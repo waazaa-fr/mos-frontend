@@ -748,6 +748,7 @@ const recreateCertificates = async () => {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
+    recreateCertificatesDialog.value = false;
     overlay.value = false;
   }
 };
