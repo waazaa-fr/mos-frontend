@@ -1,6 +1,11 @@
 <template>
-  <v-container>
-    <v-stepper :items="[$t('root password'), $t('web login & settings')]" v-model="step" hide-actions>
+  <v-container class="d-flex flex-column align-center">
+    <div class="text-center my-6">
+      <v-img :src="theme.global.name.value === 'dark' ? '/mos_icon_white.svg' : '/mos_icon.svg'" width="260" class="mx-auto mb-4" />
+      <div class="text-h4 font-weight-bold mb-1 mt-0">{{ $t('welcome to mos') }}</div>
+      <div class="text-subtitle-1 text-medium-emphasis">{{ $t('lets get you set up') }}</div>
+    </div>
+    <v-stepper :items="[$t('root password'), $t('web login & settings')]" v-model="step" hide-actions style="width: 100%">
       <template v-slot:item.1>
         <v-card :title="$t('root password')" flat>
           <v-card-text>
@@ -69,14 +74,7 @@
               required
               @update:modelValue="changeByteUnit()"
             />
-            <v-switch
-              v-model="darkMode"
-              :label="$t('dark mode')"
-              :true-value="'dark'"
-              :false-value="'light'"
-              inset color="green"
-              @update:modelValue="setDarkMode()"
-            />
+            <v-switch v-model="darkMode" :label="$t('dark mode')" :true-value="'dark'" :false-value="'light'" inset color="green" @update:modelValue="setDarkMode()" />
             <span class="text-title-medium font-weight-medium">{{ $t('uicolor') }}</span>
             <v-color-picker v-model="color" show-swatches hide-canvas hide-sliders hide-inputs @update:modelValue="changePrimaryColor" />
           </v-card-text>
@@ -86,6 +84,9 @@
         <template v-slot:prev>
           <v-btn v-if="step > 1" variant="text" @click="step = step - 1">{{ t('back') }}</v-btn>
           <span v-else></span>
+        </template>
+        <template v-slot:next>
+          <v-btn variant="text" @click="nextStep()">{{ step > 1 ? t('finish') : t('next') }}</v-btn>
         </template>
       </v-stepper-actions>
     </v-stepper>
@@ -138,8 +139,8 @@ const setDarkMode = async () => {
 };
 
 const changePrimaryColor = async (newColor) => {
-    color.value = newColor;
-    theme.themes.value[theme.global.name.value].colors.primary = newColor;
+  color.value = newColor;
+  theme.themes.value[theme.global.name.value].colors.primary = newColor;
 };
 
 const addUser = async () => {
