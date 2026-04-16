@@ -153,6 +153,15 @@ watch(
   },
 );
 
+watch(
+  () => [loginChecked.value, loggedIn.value],
+  ([checked, isLoggedIn]) => {
+    if (checked && !isLoggedIn) {
+      applySystemThemeDefaults();
+    }
+  },
+);
+
 onMounted(async () => {
   if (tab.value === '') {
     tab.value = 'dashboard';
@@ -184,6 +193,13 @@ const isDark = computed(() => {
 const logoSrc = computed(() => {
   return isDark.value ? mosBlack : mosWhite;
 });
+
+const applySystemThemeDefaults = () => {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  theme.change(prefersDark ? 'dark' : 'light');
+  theme.themes.value.light.colors.primary = '#1976D2';
+  theme.themes.value.dark.colors.primary = '#1976D2';
+};
 
 const checkLoggedIn = async () => {
   if (localStorage.getItem('authToken')) {
@@ -249,26 +265,50 @@ const getUserProfile = async () => {
   }
 };
 
-function handleLoginSuccess() {
+async function handleLoginSuccess() {
   hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'true';
   groupMenus.value = localStorage.getItem('groupMenus') === 'true';
   loggedIn.value = true;
-  getMosServices();
+
+  getNotificationsBadge();
+  connectNotificationWS();
   subscribePush();
+
+  await getMosServices();
+  await getHostname();
+  getDrawerState();
 }
 
 function handleSetupComplete() {
   loggedIn.value = false;
   token.value = '';
+  applySystemThemeDefaults();
 }
 
 function doLogout() {
   unsubscribePush().catch(() => {});
+  cleanupWS();
+
+  notificationsBadge.value = false;
+  hostname.value = '';
+  token.value = '';
+  hideInactiveMenus.value = false;
+  groupMenus.value = false;
+
+  applySystemThemeDefaults();
+
   localStorage.removeItem('authToken');
   localStorage.removeItem('userid');
+  localStorage.removeItem('username');
+  localStorage.removeItem('hideInactiveMenus');
+  localStorage.removeItem('groupMenus');
+  localStorage.removeItem('drawer');
+  localStorage.removeItem('byte_format');
+
   tab.value = 'dashboard';
   loggedIn.value = false;
   drawer.value = false;
+
   logoutDialog.value = false;
 }
 
