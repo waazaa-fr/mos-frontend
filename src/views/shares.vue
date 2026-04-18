@@ -134,7 +134,7 @@
     <v-card class="pa-0" :title="$t('create share')" prepend-icon="mdi-plus">
       <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto" class="pt-2">
         <v-text-field v-model="createSmbDialog.shareName" :label="$t('share name')" required autofocus />
-        <v-select v-model="createSmbDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
+        <v-select v-model="createSmbDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required clearable />
         <v-text-field
           v-model="createSmbDialog.subPath"
           :label="$t('select directory')"
@@ -187,7 +187,7 @@
     <v-card class="pa-0" :title="$t('add nfs share')" prepend-icon="mdi-plus">
       <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto" class="pt-2">
         <v-text-field v-model="createNfsDialog.shareName" :label="$t('share name')" required autofocus />
-        <v-select v-model="createNfsDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
+        <v-select v-model="createNfsDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required clearable/>
         <v-text-field
           v-model="createNfsDialog.subPath"
           :label="$t('select directory')"
@@ -205,7 +205,7 @@
         <v-text-field v-model="createNfsDialog.source" :label="$t('source')" required />
         <v-text-field v-model="createNfsDialog.anonuid" :label="$t('anonymous uid')" type="number" />
         <v-text-field v-model="createNfsDialog.anongid" :label="$t('anonymous gid')" type="number" />
-        <v-text-field v-model="createNfsDialog.write_operations" :label="$t('write operations')" />
+        <v-select v-model="createNfsDialog.write_operations" :items="['sync', 'async']" :label="$t('write operations')" clearable/>
         <v-text-field v-model="createNfsDialog.mapping" :label="$t('mapping')" />
         <v-switch v-model="createNfsDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
         <v-switch v-model="createNfsDialog.secure" :label="$t('secure')" inset hide-details density="compact" class="ml-4" color="green" />
@@ -295,7 +295,7 @@
         <v-text-field v-model="editNfsDialog.source" :label="$t('source')" required />
         <v-text-field v-model="editNfsDialog.anonuid" :label="$t('anonymous uid')" type="number" />
         <v-text-field v-model="editNfsDialog.anongid" :label="$t('anonymous gid')" type="number" />
-        <v-text-field v-model="editNfsDialog.write_operations" :label="$t('write operations')" />
+        <v-select v-model="editNfsDialog.write_operations" :items="['sync', 'async']" :label="$t('write operations')" clearable />
         <v-text-field v-model="editNfsDialog.mapping" :label="$t('mapping')" />
         <v-switch v-model="editNfsDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
         <v-switch v-model="editNfsDialog.secure" :label="$t('secure')" inset hide-details density="compact" class="ml-4" color="green" />
