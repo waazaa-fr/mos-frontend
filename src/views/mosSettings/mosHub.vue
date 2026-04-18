@@ -21,7 +21,7 @@
               <v-text-field :label="$t('update schedule')" v-model="settingsMosHub.schedule"></v-text-field>
               <v-text-field :label="$t('page entries')" v-model="settingsMosHub.page_entries" type="number" hide-details="auto"></v-text-field>
               <v-divider class="my-4"></v-divider>
-              <span class="text-title-medium font-weight-medium">{{ $t('update schedule') }}</span>
+              <span class="text-title-medium font-weight-medium">{{ $t('plugin update schedule') }}</span>
               <v-row class="align-center pt-2">
                 <v-col cols="12" md="2">
                   <v-switch v-model="settingsMosHub.update_check.enabled" :label="$t('update check')" inset color="green" hide-details></v-switch>

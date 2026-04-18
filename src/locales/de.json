@@ -1419,5 +1419,6 @@
   "file cannot be empty": "Datei darf nicht leer sein",
   "are you sure you want to recreate the certificates": "Bist du sicher, dass du die Zertifikate neu erstellen möchtest",
   "recreate": "Neu erstellen",
-  "page entries": "Seiteneinträge"
+  "page entries": "Seiteneinträge",
+  "plugin update schedule": "Plugin Update Zeitplan"
 }

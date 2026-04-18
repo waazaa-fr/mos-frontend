@@ -1419,5 +1419,6 @@
   "file cannot be empty": "File cannot be empty",
   "are you sure you want to recreate the certificates": "Are you sure you want to recreate the certificates",
   "recreate": "Recreate",
-  "page entries": "Page entries"
+  "page entries": "Page entries",
+  "plugin update schedule": "Plugin Update Schedule"
 }
