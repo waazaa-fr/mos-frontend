@@ -1420,5 +1420,6 @@
   "are you sure you want to recreate the certificates": "Bist du sicher, dass du die Zertifikate neu erstellen möchtest",
   "recreate": "Neu erstellen",
   "page entries": "Seiteneinträge",
-  "plugin update schedule": "Plugin Update Zeitplan"
+  "plugin update schedule": "Plugin Update Zeitplan",
+  "it may be necessary to manually restart network services such as docker, vm, or lxc": "Es kann notwendig sein, Netzwerkdienste wie Docker, VM oder LXC manuell neu zu starten"
 }

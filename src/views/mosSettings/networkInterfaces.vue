@@ -3,10 +3,10 @@
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
         <v-row>
-          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px;">
-            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle;">mdi-arrow-left</v-icon>
+          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px">
+            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle">mdi-arrow-left</v-icon>
           </v-col>
-          <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
+          <div class="d-flex align-center ga-3 mb-4" style="height: 40px">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
             <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ $t('network interfaces') }}</h2>
           </div>
@@ -14,7 +14,7 @@
       </v-container>
       <v-container fluid class="pa-0" style="margin-bottom: 80px">
         <v-card v-for="(iface, idx) in settingsNetwork.interfaces" :key="idx" class="mb-6 pa-0">
-          <v-card-title class="d-flex align-center py-3 pb-1" style="position: relative;">
+          <v-card-title class="d-flex align-center py-3 pb-1" style="position: relative">
             {{ $t('interface') }}: {{ iface.name || $t('new interface') }}
             <v-chip v-if="iface.link_state" class="ml-2" size="small" :color="iface.link_state === 'up' ? 'green' : 'red'">{{ $t(iface.link_state) }}</v-chip>
             <v-chip v-if="iface.status === 'orphan'" class="ml-2" size="small" color="red">{{ $t('orphan') }}</v-chip>
@@ -27,7 +27,7 @@
               variant="text"
               color="red"
               @click="removeInterface(idx)"
-              style="position: absolute; right: 8px; top: 8px; height: 32px; width: 32px;"
+              style="position: absolute; right: 8px; top: 8px; height: 32px; width: 32px"
             >
               <v-icon size="20">mdi-delete</v-icon>
             </v-btn>
@@ -337,7 +337,14 @@
   <!-- Warning before save -->
   <v-dialog v-model="saveNetworkSettingsDialog.value" persistent width="600">
     <v-card class="pa-0" :title="$t('save network settings')">
-      <v-card-text>{{ $t('your network settings will be saved and your network will be restarted') }}. {{ $t('do you want to continue') }}?</v-card-text>
+      <v-card-text class="pb-2">
+        {{ $t('your network settings will be saved and your network will be restarted') }}.
+        <br />
+        {{ $t('it may be necessary to manually restart network services such as docker, vm, or lxc') }}.
+        <br />
+        <br />
+        {{ $t('do you want to continue') }}?
+      </v-card-text>
       <v-card-actions>
         <v-btn color="onPrimary" text @click="saveNetworkSettingsDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn
