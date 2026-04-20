@@ -2,12 +2,15 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
-        <v-row>
-          <div class="d-flex align-center ga-3 mb-4" style="height: 40px">
-            <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
-            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ $t('webterminal') }}</h2>
-          </div>
-        </v-row>
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('webterminal') }}</h2>
+          <v-spacer></v-spacer>
+          <v-btn text class="d-flex align-center" density="compact" @click="openPopupSession()">
+            <v-icon small class="mr-1">mdi-powershell</v-icon>
+            {{ t('open') }}
+          </v-btn>
+        </div>
       </v-container>
       <v-container fluid class="pa-0">
         <div id="terminal" style="width: 100%; height: 420px; padding: 8px; background: #000000"></div>
@@ -25,6 +28,7 @@ import { io } from 'socket.io-client';
 import { showSnackbarError } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import '@xterm/xterm/css/xterm.css';
+import { openTerminalPopup } from '@/composables/terminalpopup';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -36,11 +40,7 @@ let joined = false;
 const sessions = ref([]);
 
 onMounted(async () => {
-  await checkExistingTerminals();
-  if (sessions.value.length === 0) {
-    await createTerminalSession();
-  }
-
+  await createTerminalSession();
   term = new Terminal({ cursorBlink: true, fontFamily: 'monospace', fontSize: 14 });
   term.loadAddon(fitAddon);
   term.loadAddon(clipboardAddon);
@@ -148,6 +148,7 @@ const createTerminalSession = async () => {
 
     const Result = await res.json();
     sessions.value.push(Result);
+    return Result;
   } catch (e) {
     showSnackbarError(e.message);
   }
@@ -174,4 +175,11 @@ const checkExistingTerminals = async () => {
     showSnackbarError(e.message);
   }
 };
+
+const openPopupSession = async () => {
+  const result = await createTerminalSession();
+  const sessionId = result.sessionId;
+  openTerminalPopup(sessionId);
+};
+
 </script>
