@@ -22,7 +22,7 @@
             <v-card-text class="pa-6">
               <h2>{{ t('login') }}</h2>
               <p class="text-medium-emphasis mb-6 text-body-2">{{ t('welcome back') }}</p>
-              <v-form ref="formRef" v-model="isValid" @submit.prevent="onSubmit">
+              <v-form ref="formRef" v-model="isValid" @submit.prevent="onSubmit" @keydown.enter="onSubmit">
                 <v-text-field v-model.trim="username" :label="t('username') || 'Username'" autocomplete="username" variant="outlined" density="comfortable" :rules="[rules.required]" class="mb-3" />
                 <v-text-field
                   v-model="password"
