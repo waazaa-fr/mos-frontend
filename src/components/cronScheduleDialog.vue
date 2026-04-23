@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="internalVisible" max-width="520">
-    <v-card :title="t('set schedule')" :prepend-icon="mdi-calendar-clock">
-      <v-card-text>
+    <v-card :title="t('set schedule')" prepend-icon="mdi-calendar-clock">
+      <v-card-text class="pb-2">
         <CronVuetify v-model="localSchedule" @error="onCronError" />
-        <div class="cron-schedule-preview text-center text-medium-emphasis mb-2 mt-4">
+        <div class="cron-schedule-preview text-center text-medium-emphasis mb-2 mt-4 pa-2" style="border-style: solid;">
            <strong>{{ liveSchedulePreview }}</strong>
         </div>
       </v-card-text>
