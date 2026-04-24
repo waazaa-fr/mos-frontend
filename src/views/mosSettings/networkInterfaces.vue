@@ -50,7 +50,7 @@
               <v-select
                 :label="$t('type')"
                 v-model="iface.type"
-                :items="['ethernet', 'bridged']"
+                :items="['ethernet', 'bridged', 'bonded']"
                 item-title="type"
                 item-value="type"
                 variant="outlined"
@@ -68,8 +68,18 @@
                 <template v-if="!iface.ipv4[0].dhcp">
                   <v-col cols="12" md="6">
                     <v-row>
-                    <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
-                    <v-text-field :label="$t('cidr')" v-model="iface.ipv4[0].cidr" variant="outlined" hide-details="auto" class="ml-0" style="max-width: 120px; margin-top: 0" min="0" max="32" type="number"></v-text-field>
+                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                      <v-text-field
+                        :label="$t('cidr')"
+                        v-model="iface.ipv4[0].cidr"
+                        variant="outlined"
+                        hide-details="auto"
+                        class="ml-0"
+                        style="max-width: 120px; margin-top: 0"
+                        min="0"
+                        max="32"
+                        type="number"
+                      ></v-text-field>
                     </v-row>
                   </v-col>
                   <v-col cols="12" md="6">
@@ -123,14 +133,13 @@
               <v-select
                 :label="$t('type')"
                 v-model="iface.type"
-                :items="['ethernet', 'bridged']"
+                :items="['ethernet', 'bridged', 'bonded']"
                 item-title="type"
                 item-value="type"
                 variant="outlined"
                 hide-details="auto"
                 @update:model-value="changeInterfaceType(iface)"
               ></v-select>
-
               <v-divider class="my-4"></v-divider>
               <div class="d-flex align-center mb-4">
                 <span class="text-title-medium font-weight-medium">{{ $t('bridge') }}</span>
@@ -166,10 +175,20 @@
                 <template v-if="!iface.ipv4[0].dhcp">
                   <v-col cols="12" md="6">
                     <v-row>
-                    <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
-                    <v-text-field :label="$t('cidr')" v-model="iface.ipv4[0].cidr" variant="outlined" hide-details="auto" class="ml-0" style="max-width: 120px; margin-top: 0" min="0" max="32" type="number"></v-text-field>
+                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                      <v-text-field
+                        :label="$t('cidr')"
+                        v-model="iface.ipv4[0].cidr"
+                        variant="outlined"
+                        hide-details="auto"
+                        class="ml-0"
+                        style="max-width: 120px; margin-top: 0"
+                        min="0"
+                        max="32"
+                        type="number"
+                      ></v-text-field>
                     </v-row>
-                  </v-col>                  
+                  </v-col>
                   <v-col cols="12" md="6">
                     <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                   </v-col>
@@ -206,6 +225,127 @@
                     <v-text-field :label="$t('ipv6 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv6').value" variant="outlined" hide-details="auto"></v-text-field>
                   </v-col>
                 </template>
+              </v-row>
+            </template>
+
+            <!-- BOND -->
+            <template v-else-if="iface.type === 'bond'">
+              <v-switch
+                v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined"
+                :label="$t('enabled')"
+                :model-value="iface.status === 'enabled'"
+                @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')"
+                :readonly="readonlyInterfaceEnabled()"
+                inset
+                density="compact"
+                color="green"
+              ></v-switch>
+              <v-divider class="my-2"></v-divider>
+              <v-text-field :label="$t('mode')" model-value="802.3ad" variant="outlined" readonly></v-text-field>
+              <v-select
+                :label="$t('interfaces')"
+                v-model="iface.interfaces"
+                :items="getAvailableBondedInterfacesForBond(iface)"
+                multiple
+                chips
+                variant="outlined"
+                hide-details="auto"
+                max="2"
+              ></v-select>
+              <v-divider class="my-4"></v-divider>
+              <div class="d-flex align-center mb-2">
+                <span class="text-title-medium font-weight-medium">{{ $t('ipv4') }}</span>
+              </div>
+              <v-row v-if="iface.ipv4.length > 0">
+                <v-col cols="12">
+                  <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+                </v-col>
+                <template v-if="!iface.ipv4[0].dhcp">
+                  <v-col cols="12" md="6">
+                    <v-row>
+                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                      <v-text-field
+                        :label="$t('cidr')"
+                        v-model="iface.ipv4[0].cidr"
+                        variant="outlined"
+                        hide-details="auto"
+                        class="ml-0"
+                        style="max-width: 120px; margin-top: 0"
+                        min="0"
+                        max="32"
+                        type="number"
+                      ></v-text-field>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value" variant="outlined" hide-details="auto"></v-text-field>
+                  </v-col>
+                </template>
+              </v-row>
+
+              <div class="d-flex align-center mb-2 mt-4">
+                <span class="text-title-medium font-weight-medium mr-4">{{ $t('ipv6') }}</span>
+              </div>
+              <v-switch
+                :label="$t('enable ipv6')"
+                color="green"
+                hide-details="auto"
+                inset
+                density="compact"
+                :model-value="iface.ipv6.length > 0"
+                @update:model-value="changeIPv6Enabled(iface, $event)"
+              ></v-switch>
+              <v-row v-if="iface.ipv6.length > 0">
+                <v-col cols="12">
+                  <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+                </v-col>
+                <template v-if="!iface.ipv6[0].dhcp">
+                  <v-col cols="12" md="6">
+                    <v-text-field :label="$t('ipv6 address')" v-model="iface.ipv6[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field :label="$t('ipv6 gateway')" v-model="iface.ipv6[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field :label="$t('ipv6 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv6').value" variant="outlined" hide-details="auto"></v-text-field>
+                  </v-col>
+                </template>
+              </v-row>
+            </template>
+
+            <!-- BONDED -->
+            <template v-else-if="iface.type === 'bonded'">
+              <v-switch
+                v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined"
+                :label="$t('enabled')"
+                :model-value="iface.status === 'enabled'"
+                @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')"
+                :readonly="readonlyInterfaceEnabled()"
+                inset
+                density="compact"
+                color="green"
+              ></v-switch>
+              <v-select
+                :label="$t('type')"
+                v-model="iface.type"
+                :items="['ethernet', 'bridged', 'bonded']"
+                item-title="type"
+                item-value="type"
+                variant="outlined"
+                hide-details="auto"
+                @update:model-value="changeInterfaceType(iface)"
+              ></v-select>
+              <v-divider class="my-4"></v-divider>
+              <div class="d-flex align-center mb-4">
+                <span class="text-title-medium font-weight-medium">{{ $t('bond') }}</span>
+              </div>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field :label="$t('bond')" :model-value="findBondForInterface(iface).name" variant="outlined" hide-details="auto" readonly></v-text-field>
+                </v-col>
               </v-row>
             </template>
 
@@ -289,13 +429,13 @@
           </div>
           <v-switch :label="$t('ipv4 dhcp')" v-model="addVlanDialog.ipv4.dhcp" inset density="compact" color="green"></v-switch>
           <template v-if="!addVlanDialog.ipv4.dhcp">
-                <v-row>
-                  <v-text-field :label="$t('ipv4 address')" v-model="addVlanDialog.ipv4.address" variant="outlined"></v-text-field>
-                  <v-text-field :label="$t('cidr')" v-model="addVlanDialog.ipv4.cidr" variant="outlined" class="ml-0" style="max-width: 120px; margin-top: 0" min="0" max="32" type="number"></v-text-field>
-                </v-row>
-              <v-col cols="12" md="6" class="pb-0">
-                <v-text-field :label="$t('ipv4 gateway')" v-model="addVlanDialog.ipv4.gateway" variant="outlined"></v-text-field>
-              </v-col>
+            <v-row>
+              <v-text-field :label="$t('ipv4 address')" v-model="addVlanDialog.ipv4.address" variant="outlined"></v-text-field>
+              <v-text-field :label="$t('cidr')" v-model="addVlanDialog.ipv4.cidr" variant="outlined" class="ml-0" style="max-width: 120px; margin-top: 0" min="0" max="32" type="number"></v-text-field>
+            </v-row>
+            <v-col cols="12" md="6" class="pb-0">
+              <v-text-field :label="$t('ipv4 gateway')" v-model="addVlanDialog.ipv4.gateway" variant="outlined"></v-text-field>
+            </v-col>
             <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="addVlanDialog.ipv4.dns" variant="outlined"></v-text-field>
           </template>
           <div class="d-flex align-center mb-2 mt-4">
@@ -463,10 +603,25 @@ const getNetworkSettings = async () => {
 
     settingsNetwork.value = await res.json();
     settingsNetwork.value.interfaces.forEach((iface) => {
-      if (!iface.ipv4 || iface.ipv4.length === 0) iface.ipv4 = [{ dhcp: false, address: null, cidr: null, gateway: null, dns: [] }];
-      if (iface.ipv4[0] && iface.ipv4[0].cidr === undefined) iface.ipv4[0].cidr = null;
-      if (!iface.ipv6) iface.ipv6 = [];
+      // Initialize ipv4/ipv6 for all types except bonded
+      if (iface.type === 'bonded') {
+        iface.ipv4 = [];
+        iface.ipv6 = [];
+      } else {
+        if (!iface.ipv4 || iface.ipv4.length === 0) {
+          iface.ipv4 = [{ dhcp: true, address: null, cidr: null, gateway: null, dns: [] }];
+        }
+        if (iface.ipv4[0] && iface.ipv4[0].cidr === undefined) {
+          iface.ipv4[0].cidr = null;
+        }
+        if (!iface.ipv6) {
+          iface.ipv6 = [];
+        }
+      }
+
       if (!iface.vlans) iface.vlans = [];
+      if (iface.type === 'bond' && !iface.interfaces) iface.interfaces = [];
+      if (iface.type === 'bond') iface.mode = '802.3ad';
 
       iface.vlans.forEach((vlan) => {
         if (vlan.ipv4 && vlan.ipv4.length > 0 && vlan.ipv4[0] && vlan.ipv4[0].cidr === undefined) vlan.ipv4[0].cidr = null;
@@ -481,16 +636,40 @@ const getNetworkSettings = async () => {
   }
 };
 
+const validateBondInterfaces = () => {
+  const invalidBond = settingsNetwork.value.interfaces.find((iface) => iface.type === 'bond' && (!Array.isArray(iface.interfaces) || iface.interfaces.length !== 2));
+  if (!invalidBond) return true;
+
+  showSnackbarError(t('bond requires exactly two interfaces'));
+  return false;
+};
+
 const setNetworkSettings = async () => {
   try {
+    if (!validateBondInterfaces()) return;
     overlay.value = true;
+    const payload = settingsNetwork.value.interfaces.map((iface) => {
+      if (iface.type === 'bond') {
+        return {
+          ...iface,
+          mode: '802.3ad',
+        };
+      }
+      if (iface.type !== 'bonded') return iface;
+      return {
+        ...iface,
+        ipv4: [],
+        ipv6: [],
+      };
+    });
+
     const res = await fetch('/api/v1/mos/settings/network/interfaces', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(settingsNetwork.value.interfaces),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -563,7 +742,30 @@ const changeInterfaceType = (iface) => {
     if (bridgeIdx !== -1) {
       settingsNetwork.value.interfaces.splice(bridgeIdx, 1);
     }
+    settingsNetwork.value.interfaces.forEach((i, idx) => {
+      if (i.type === 'bond' && Array.isArray(i.interfaces) && i.interfaces.includes(iface.name)) {
+        i.interfaces = i.interfaces.filter((name) => name !== iface.name);
+        if (i.interfaces.length === 0) {
+          settingsNetwork.value.interfaces.splice(idx, 1);
+        }
+      }
+    });
+    // Ensure ipv4/ipv6 are initialized for ethernet
+    if (!iface.ipv4 || iface.ipv4.length === 0) {
+      iface.ipv4 = [{ dhcp: true, address: null, cidr: null, gateway: null, dns: [] }];
+    }
+    if (!iface.ipv6) {
+      iface.ipv6 = [];
+    }
   } else if (iface.type === 'bridged') {
+    settingsNetwork.value.interfaces.forEach((i, idx) => {
+      if (i.type === 'bond' && Array.isArray(i.interfaces) && i.interfaces.includes(iface.name)) {
+        i.interfaces = i.interfaces.filter((name) => name !== iface.name);
+        if (i.interfaces.length === 0) {
+          settingsNetwork.value.interfaces.splice(idx, 1);
+        }
+      }
+    });
     const hasBridge = settingsNetwork.value.interfaces.some((i) => i.type === 'bridge');
     const bridgeName = 'br' + iface.name.slice(3);
     if (!hasBridge) {
@@ -585,6 +787,43 @@ const changeInterfaceType = (iface) => {
         interfaces: [iface.name],
       });
     }
+  } else if (iface.type === 'bonded') {
+    // If changing to bonded, remove any bridge that includes this interface
+    const bridgeIdx = settingsNetwork.value.interfaces.findIndex((i) => i.type === 'bridge' && i.interfaces.includes(iface.name));
+    if (bridgeIdx !== -1) {
+      settingsNetwork.value.interfaces.splice(bridgeIdx, 1);
+    }
+    iface.ipv4 = [];
+    iface.ipv6 = [];
+    let existingBond = settingsNetwork.value.interfaces.find((i) => i.type === 'bond' && Array.isArray(i.interfaces) && i.interfaces.length < 2 && !i.interfaces.includes(iface.name));
+    if (existingBond) {
+      existingBond.interfaces.push(iface.name);
+    } else {
+      const bondNumber = Math.max(-1, ...settingsNetwork.value.interfaces.filter((i) => i.type === 'bond').map((i) => parseInt(i.name.replace('bond', '')) || 0)) + 1;
+      settingsNetwork.value.interfaces.push({
+        name: 'bond' + bondNumber,
+        label: null,
+        type: 'bond',
+        mode: '802.3ad',
+        interfaces: [iface.name],
+        ipv4: [
+          {
+            dhcp: true,
+            address: null,
+            cidr: null,
+            gateway: null,
+            dns: [],
+          },
+        ],
+        ipv6: [],
+        vlans: [],
+        mtu: null,
+        hw_addr: null,
+        status: 'enabled',
+      });
+    }
+  } else if (iface.type === 'bond') {
+    iface.mode = '802.3ad';
   }
 };
 
@@ -629,6 +868,16 @@ const opensettingsNetworkCountdownDialog = (networkSettings) => {
 
 const findBridgeForInterface = (iface) => {
   return settingsNetwork.value.interfaces.find((i) => i.type === 'bridge' && i.interfaces.includes(iface.name)) || { name: '' };
+};
+
+const getAvailableBondedInterfacesForBond = (bond) => {
+  const bondedInterfaces = settingsNetwork.value.interfaces.filter((i) => i.type === 'bonded').map((i) => i.name);
+  const assignedInOtherBonds = settingsNetwork.value.interfaces.filter((i) => i.type === 'bond' && i.name !== bond.name && Array.isArray(i.interfaces)).flatMap((i) => i.interfaces);
+  return bondedInterfaces.filter((name) => !assignedInOtherBonds.includes(name));
+};
+
+const findBondForInterface = (iface) => {
+  return settingsNetwork.value.interfaces.find((i) => i.type === 'bond' && Array.isArray(i.interfaces) && i.interfaces.includes(iface.name)) || { name: '' };
 };
 
 const readonlyInterfaceEnabled = () => {
