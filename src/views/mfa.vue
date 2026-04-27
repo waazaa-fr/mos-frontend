@@ -31,11 +31,7 @@
                   autocomplete="one-time-code"
                   variant="outlined"
                   density="comfortable"
-                  maxlength="6"
-                  counter="6"
-                  inputmode="numeric"
-                  :rules="[rules.required, rules.sixDigits]"
-                  @update:model-value="onCodeInput"
+                  :rules="[rules.required]"
                   class="mb-4"
                 />
                 <v-btn type="submit" block size="large" :disabled="!isValid || overlay">
@@ -87,11 +83,6 @@ const logoColorThemed = computed(() => {
 
 const rules = {
   required: (v) => !!v || t('required') || 'Required',
-  sixDigits: (v) => /^\d{6}$/.test(v || '') || t('must be 6 digits') || 'Code must contain exactly 6 digits',
-};
-
-const onCodeInput = (value) => {
-  totpCode.value = (value || '').replace(/\D/g, '').slice(0, 6);
 };
 
 const onSubmit = async () => {
