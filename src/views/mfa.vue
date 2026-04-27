@@ -7,7 +7,7 @@
           <div class="brand centered">
             <v-img :src="logoColorThemed" alt="MOS Logo" width="200" class="mx-auto mb-6" contain />
             <h1 class="brand__title">{{ t('mos portal') }}</h1>
-            <p class="brand__copy">{{ t('secure login') || 'Secure login with TOTP verification' }}</p>
+            <p class="brand__copy">{{ t('secure login') }}</p>
           </div>
         </v-col>
 
@@ -20,15 +20,14 @@
         <v-col cols="12" sm="5" class="pa-5 d-flex align-center">
           <v-card class="elevated" elevation="8" style="width: 100%">
             <v-card-text class="pa-6">
-              <h2>{{ t('two factor authentication') || 'Two-factor authentication' }}</h2>
+              <h2>{{ t('two factor authentication') }}</h2>
               <p class="text-medium-emphasis mb-6 text-body-2">
-                {{ t('enter your totp code') || 'Enter the 6-digit code from your authenticator app.' }}
+                {{ t('enter your totp code') }}
               </p>
-
               <v-form ref="formRef" v-model="isValid" @submit.prevent="onSubmit" @keydown.enter="onSubmit">
                 <v-text-field
                   v-model="totpCode"
-                  :label="t('totp code') || 'TOTP Code'"
+                  :label="t('authenticator code')"
                   autocomplete="one-time-code"
                   variant="outlined"
                   density="comfortable"
@@ -39,9 +38,8 @@
                   @update:model-value="onCodeInput"
                   class="mb-4"
                 />
-
-                <v-btn type="submit" block size="large" :loading="loading" :disabled="!isValid || loading">
-                  {{ t('verify') || 'Verify' }}
+                <v-btn type="submit" block size="large" :disabled="!isValid || overlay">
+                  {{ t('verify') }}
                 </v-btn>
               </v-form>
             </v-card-text>
@@ -50,22 +48,38 @@
       </v-row>
     </v-container>
   </div>
+
+  <v-overlay :model-value="overlay" class="align-center justify-center">
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
+  </v-overlay>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTheme } from 'vuetify';
+import { useRouter } from 'vue-router';
+import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import mosBlack from '/mos_black.png';
 import mosWhite from '/mos_white.png';
 
-const { t } = useI18n();
-const theme = useTheme();
+const props = defineProps({
+  mfaToken: {
+    type: String,
+    default: '',
+  },
+});
 
+const emit = defineEmits(['login-success', 'refresh-drawer', 'refresh-notifications-badge']);
+
+const { locale, t } = useI18n();
+const theme = useTheme();
+const router = useRouter();
 const loading = ref(false);
 const isValid = ref(false);
 const formRef = ref(null);
 const totpCode = ref('');
+const overlay = ref(false);
 
 const logoColorThemed = computed(() => {
   return theme.global.name.value === 'dark' ? mosWhite : mosBlack;
@@ -84,9 +98,7 @@ const onSubmit = async () => {
   const ok = await formRef.value?.validate();
   if (!ok) return;
 
-  // Placeholder action for the actual verification flow.
-  loading.value = true;
-  loading.value = false;
+  await verifyMfa(props.mfaToken, totpCode.value);
 };
 
 const verifyMfa = async (mfa_token, code) => {
@@ -95,9 +107,8 @@ const verifyMfa = async (mfa_token, code) => {
 
   try {
     const res = await fetch(`/api/v1/auth/mfa`, {
-      method: 'PUT',
+      method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
@@ -109,10 +120,31 @@ const verifyMfa = async (mfa_token, code) => {
     }
 
     const result = await res.json();
+    localStorage.setItem('authToken', result.token);
+    localStorage.setItem('userid', result.user.id);
+    localStorage.setItem('byte_format', result.user.byte_format || 'binary');
+    localStorage.setItem('username', result.user.username || '');
+    localStorage.setItem('hideInactiveMenus', result.user.hide_inactive_menus ? 'true' : 'false');
+    localStorage.setItem('groupMenus', result.user.group_menus ? 'true' : 'false');
+
+    if (result.user.darkmode) {
+      theme.change('dark');
+    } else {
+      theme.change('light');
+    }
+
+    locale.value = result.user.language || 'en';
+    theme.themes.value[theme.global.name.value].colors.primary = result.user.primary_color || '#1976D2';
+
+    showSnackbarSuccess?.(t('logged in successfully'));
+
+    emit('login-success');
+    await router.push('/dashboard');
+
     return result;
   } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
+    const [userMessage, apiErrorMessage] = (e.message || '').split('|$|');
+    showSnackbarError?.(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }

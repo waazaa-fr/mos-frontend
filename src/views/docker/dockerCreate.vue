@@ -8,7 +8,37 @@
           </v-btn>
         </v-toolbar>
         <div class="pa-4">
-        Hier sind dann Ichis Fancy Ports aufgelistet: <br />- Port 80: HTTP <br />- Port 443: HTTPS <br />- Port 22: SSH <br />- Port 3306: MySQL <br />- Port 6379: Redis <br />- Port 27017: MongoDB <br />- Port 8080: Alternative HTTP <br />- Port 8443: Alternative HTTPS <br />- Port 21: FTP <br />- Port 25: SMTP <br />- Port 53: DNS <br />- Port 110: POP3 <br />- Port 143: IMAP <br />- Port 5900: VNC <br />- Port 6379: Redis
+          Hier sind dann Ichis Fancy Ports aufgelistet:
+          <br />
+          - Port 80: HTTP
+          <br />
+          - Port 443: HTTPS
+          <br />
+          - Port 22: SSH
+          <br />
+          - Port 3306: MySQL
+          <br />
+          - Port 6379: Redis
+          <br />
+          - Port 27017: MongoDB
+          <br />
+          - Port 8080: Alternative HTTP
+          <br />
+          - Port 8443: Alternative HTTPS
+          <br />
+          - Port 21: FTP
+          <br />
+          - Port 25: SMTP
+          <br />
+          - Port 53: DNS
+          <br />
+          - Port 110: POP3
+          <br />
+          - Port 143: IMAP
+          <br />
+          - Port 5900: VNC
+          <br />
+          - Port 6379: Redis
         </div>
       </template>
     </v-navigation-drawer>

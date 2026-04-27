@@ -1445,5 +1445,11 @@
   "mfa qr code": "MFA QR Code",
   "mfa recovery code": "MFA Recovery Code",
   "recovery code": "Recovery Code",
-  "please enter recovery code here to close this dialog": "Please enter recovery code here to close this dialog"
+  "please enter recovery code here to close this dialog": "Please enter recovery code here to close this dialog",
+  "two factor authentication": "Two Factor Authentication",
+  "enter your totp code": "Enter your TOTP code",
+  "code": "Code",
+  "secure login": "Secure Login",
+  "authenticator code": "Authenticator code",
+  "must be 6 digits": "Must be 6 digits"
 }

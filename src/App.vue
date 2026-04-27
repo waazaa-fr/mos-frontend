@@ -3,8 +3,13 @@
     <template v-if="!loginChecked">
       <v-progress-circular indeterminate color="onPrimary" class="ma-5"></v-progress-circular>
     </template>
-    <template v-if="loginChecked && !loggedIn && !token">
-      <Login @login-success="handleLoginSuccess" />
+    <template v-if="loginChecked && !loggedIn && !token && !mfaRequired">
+      <Login @login-success="handleLoginSuccess" @mfa-required="handleMfaRequired" />
+    </template>
+    <template v-if="loginChecked && !loggedIn && !token && mfaRequired && route.path === '/mfa'">
+      <router-view v-slot="{ Component }">
+        <component :is="Component" :mfa-token="mfaToken" @login-success="handleLoginSuccess" />
+      </router-view>
     </template>
     <template v-if="loginChecked && !loggedIn && token">
       <FirstSetup @setup-complete="handleSetupComplete" :token="token" />
@@ -115,11 +120,12 @@ import { Toaster } from 'vue-sonner';
 import mosBlack from '/mos_black.png';
 import mosWhite from '/mos_white.png';
 import { useDisplay } from 'vuetify';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const display = useDisplay();
 const theme = useTheme();
 const route = useRoute();
+const router = useRouter();
 const { locale, t } = useI18n();
 const tab = ref('');
 const drawer = ref(false);
@@ -127,6 +133,8 @@ const isWideScreen = computed(() => display.mdAndUp.value);
 const loggedIn = ref(false);
 const token = ref('');
 const logoutDialog = ref(false);
+const mfaRequired = ref(false);
+const mfaToken = ref('');
 const loginChecked = ref(false);
 const mosServices = ref({});
 const appBarColor = 'primary';
@@ -265,10 +273,18 @@ const getUserProfile = async () => {
   }
 };
 
+function handleMfaRequired(newMfaToken) {
+  mfaRequired.value = true;
+  mfaToken.value = newMfaToken || '';
+  router.push('/mfa');
+}
+
 async function handleLoginSuccess() {
   hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'true';
   groupMenus.value = localStorage.getItem('groupMenus') === 'true';
   loggedIn.value = true;
+  mfaRequired.value = false;
+  mfaToken.value = '';
 
   getNotificationsBadge();
   connectNotificationWS();
@@ -282,6 +298,8 @@ async function handleLoginSuccess() {
 function handleSetupComplete() {
   loggedIn.value = false;
   token.value = '';
+  mfaRequired.value = false;
+  mfaToken.value = '';
   applySystemThemeDefaults();
 }
 
@@ -292,6 +310,8 @@ function doLogout() {
   notificationsBadge.value = false;
   hostname.value = '';
   token.value = '';
+  mfaRequired.value = false;
+  mfaToken.value = '';
   hideInactiveMenus.value = false;
   groupMenus.value = false;
 

@@ -41,6 +41,7 @@ import Notifications from '../views/notifications.vue';
 import RemoteMounting from '../views/remoteMounting.vue';
 import Plugins from '../views/plugins.vue';
 import PluginView from '../views/pluginView.vue';
+import Mfa from '../views/mfa.vue';
 
 const routes = [
   { path: '', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Dashboard for your server' } },
@@ -115,6 +116,7 @@ const routes = [
     props: true,
     meta: { hideAppBar: false, title: 'Plugin', description: 'Plugin view' },
   },
+  { path: '/mfa', component: Mfa, meta: { hideAppBar: true, title: 'MFA', description: 'Multi-factor authentication' } },
 ];
 
 const router = createRouter({

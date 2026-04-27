@@ -69,7 +69,7 @@ const logoColorThemed = computed(() => {
   return theme.global.name.value === 'dark' ? mosWhite : mosBlack;
 });
 
-const emit = defineEmits(['refresh-drawer', 'login-success']);
+const emit = defineEmits(['refresh-drawer', 'login-success', 'mfa-required']);
 
 const rules = {
   required: (v) => !!v || v === 0 || t('required') || 'Required',
@@ -96,6 +96,13 @@ const login = async () => {
     }
 
     const result = await res.json();
+
+    //MFA required
+    if (result.mfa_required) {
+      emit('refresh-drawer');
+      emit('mfa-required', result.mfa_token);
+      return;
+    }
 
     localStorage.setItem('authToken', result.token);
     localStorage.setItem('userid', result.user.id);
