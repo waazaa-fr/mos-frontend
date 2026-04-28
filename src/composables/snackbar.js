@@ -11,10 +11,11 @@ import { VIcon } from 'vuetify/components';
 const snackbar = ref(false);
 const snackbarPosition = ref('bottom center');
 
-export function showSnackbarSuccess(text, icon = 'mdi-check-circle', position = 'bottom-toaster', duration = 3000) {
+export function showSnackbarSuccess(text, successText = '', icon = 'mdi-check-circle', position = 'bottom-toaster', duration = 3000) {
   snackbar.value = true;
 
   toast.success(text, {
+    description: successText || undefined,
     duration,
     icon: h(VIcon, { icon }),
     toasterId: position,

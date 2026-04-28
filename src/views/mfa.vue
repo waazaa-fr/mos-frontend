@@ -127,7 +127,11 @@ const verifyMfa = async (mfa_token, code) => {
     locale.value = result.user.language || 'en';
     theme.themes.value[theme.global.name.value].colors.primary = result.user.primary_color || '#1976D2';
 
+    if (result.message != null && result.message !== '') {
+      showSnackbarSuccess?.(t('logged in successfully'), result.message);
+    } else {
     showSnackbarSuccess?.(t('logged in successfully'));
+    }
 
     emit('login-success');
     await router.push('/dashboard');

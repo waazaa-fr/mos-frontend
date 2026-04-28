@@ -63,7 +63,7 @@
   <v-dialog v-model="mfaDialog.value" max-width="400px" persistent>
     <v-card :title="mfaEnabled ? t('disable mfa') : t('enable mfa')" :prepend-icon="mfaEnabled ? 'mdi-lock' : 'mdi-lock-open'">
       <v-card-text>
-        <v-text-field v-model="mfaDialog.password" :label="t('password')" type="password" variant="outlined" density="comfortable" hide-details="auto" />
+        <v-text-field v-model="mfaDialog.password" :label="t('password')" type="password" variant="outlined" density="comfortable" hide-details="auto" @keydown.enter="setupMfa()" />
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -107,7 +107,7 @@
   <v-dialog v-model="mfaDeleteDialog.value" max-width="400px">
     <v-card :title="t('disable mfa')" prepend-icon="mdi-lock">
       <v-card-text>
-        <v-text-field v-model="mfaDeleteDialog.password" :label="t('password')" type="password" variant="outlined" density="comfortable" class="mb-4" hide-details="auto" />
+        <v-text-field v-model="mfaDeleteDialog.password" :label="t('password')" type="password" variant="outlined" density="comfortable" class="mb-4" hide-details="auto" @keydown.enter="deleteMfa()" />
       </v-card-text>
       <v-divider />
       <v-card-actions>
