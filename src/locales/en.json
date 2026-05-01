@@ -1454,5 +1454,8 @@
   "must be 6 digits": "Must be 6 digits",
   "failed to copy value": "Failed to copy value",
   "value copied to clipboard": "Value copied to clipboard",
-  "enter authenticator code to confirm": "Enter authenticator code to confirm"
+  "enter authenticator code to confirm": "Enter authenticator code to confirm",
+  "swap available": "Swap available",
+  "swap used": "Swap used",
+  "swap total": "Swap total"  
 }

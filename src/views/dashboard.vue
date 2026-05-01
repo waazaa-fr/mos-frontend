@@ -126,6 +126,7 @@ const pluginLabels = ref({});
 const cpu = ref(null);
 const network = ref(null);
 const memory = ref(null);
+const swap = ref(null);
 const pools = ref(null);
 const disks = ref(null);
 const temperature = ref(null);
@@ -336,7 +337,7 @@ const widgetProps = (id) => {
     case 'network':
       return { network: network.value };
     case 'memory':
-      return { memory: memory.value };
+      return { memory: memory.value, swap: swap.value };
     case 'disks':
       return { disks: disks.value };
     case 'pools':
@@ -373,6 +374,7 @@ const getData = async () => {
       cpu.value = result.cpu;
       memory.value = result.memory;
       temperature.value = result.temperature;
+      swap.value = result.swap;
     } else {
       const err = await res.json();
       throw new Error(`${t('could not load system info')}|$| ${err.error || t('unknown error')}`);
@@ -432,6 +434,7 @@ const getLoadWS = () => {
     if (data.temperature) temperature.value = data.temperature;
     if (data.pools) disks.value = pools.value = data.pools;
     if (data.sensors) sensors.value = data.sensors;
+    if (data.swap) swap.value = data.swap;
   };
   socket.on('get-load', apply);
   socket.on('load-update', apply);

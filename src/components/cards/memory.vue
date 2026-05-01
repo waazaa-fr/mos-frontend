@@ -36,32 +36,55 @@
           {{ mem.free_human }}
         </div>
       </v-col>
+      <v-divider class="my-2" v-if="swp.total > 0"></v-divider>
+      <v-col cols="3" sm="3" md="3" xl="3" v-if="swp.total && swp.total > 0">
+        <div class="text-caption text-medium-emphasis">
+          <strong>{{ $t('swap total') }}</strong>
+        </div>
+        <div class="text-body-2" :title="swp.total_human" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+          {{ swp.total_human }}
+        </div>
+      </v-col>   
+      <v-col cols="3" sm="3" md="3" xl="3" v-if="swp.available_human && swp.total > 0">
+        <div class="text-caption text-medium-emphasis">
+          <strong>{{ $t('swap available') }}</strong>
+        </div>
+        <div class="text-body-2" :title="swp.available_human" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+          {{ swp.available_human }}
+        </div>
+      </v-col>
+      <v-col cols="3" sm="3" md="3" xl="3" v-if="swp.used_human && swp.total > 0">
+        <div class="text-caption text-medium-emphasis">
+          <strong>{{ $t('swap used') }}</strong>
+        </div>
+        <div class="text-body-2" :title="swp.used_human" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+          {{ swp.used_human }}
+        </div>
+      </v-col>
       <v-divider class="my-2"></v-divider>
       <v-col cols="12">
         <div class="memory-bar-container">
-          <div class="memory-segment actual-used" :style="{ width: getMemUsedPercentage() + '%' }" :title="`Used: ${mem.used_human || 0}`">
+          <div class="memory-segment actual-used" :style="{ width: getMemUsedPercentage() + '%' }">
             <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%">
-              <small>{{ mem.used_human || 0 }}</small>
             </div>
           </div>
-          <div class="memory-segment free" :style="{ width: getMemFreePercentage() + '%' }" :title="`Free: ${mem.free_human || 0}`">
+          <div class="memory-segment free" :style="{ width: getMemFreePercentage() + '%' }">
             <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%">
-              <small>{{ mem.free_human || 0 }}</small>
             </div>
           </div>
         </div>
         <div class="memory-legend mt-2">
           <div class="legend-item">
             <div class="legend-color actual-used"></div>
-            <span class="text-caption">{{ $t('used') }} ({{ getMemUsedPercentage() }}%)</span>
+            <span class="text-caption">{{ $t('used') }}  ({{ getMemUsedPercentage() }}%)</span>
           </div>
           <div class="legend-item">
             <div class="legend-color free"></div>
-            <span class="text-caption">{{ $t('free') }} ({{ getMemFreePercentage() }}%)</span>
+            <span class="text-caption">{{ $t('free') }}  ({{ getMemFreePercentage() }}%)</span>
           </div>
         </div>
       </v-col>
-      <v-divider class="my-2"></v-divider>
+      <v-divider class="my-2"></v-divider>      
       <v-col cols="12">
         <details class="memory-details">
           <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('details') }}</summary>
@@ -148,9 +171,11 @@ import { toRefs, computed } from 'vue';
 
 const props = defineProps({
   memory: { type: Object, default: () => ({}) },
+  swap: { type: Object, default: () => ({}) },
 });
-const { memory } = toRefs(props);
+const { memory, swap } = toRefs(props);
 const mem = computed(() => memory.value ?? {});
+const swp = computed(() => swap.value ?? {});
 
 const getRealFreePercentage = () => {
   const actuallyUsed = mem.value.percentage?.actuallyUsed || 0;
