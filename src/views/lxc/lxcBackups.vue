@@ -567,9 +567,11 @@ const openCreateBackupDialog = async () => {
   overlay.value = true;
   const lxcSettings = await getLXCService();
   overlay.value = false;
-  createBackupDialog.use_snapshot = lxcSettings.use_snapshot || true;
-  createBackupDialog.compression = lxcSettings.compression || 0;
-  createBackupDialog.threads = lxcSettings.threads || 0;
+  if (lxcSettings !== undefined) {
+    createBackupDialog.use_snapshot = lxcSettings.use_snapshot;
+    createBackupDialog.compression = lxcSettings.compression;
+    createBackupDialog.threads = lxcSettings.threads;
+  }
 };
 const openDeleteBackupDialog = (backup) => {
   deleteBackupDialog.value = true;
