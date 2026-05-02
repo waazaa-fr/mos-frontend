@@ -15,43 +15,72 @@
           </v-card-text>
         </v-card>
         <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
-          <v-card-title>{{ $t('overview') }}</v-card-title>
-          <v-card-text class="pa-0">
-            <v-list>
-              <v-list-item v-for="remote in remotes" :key="remote.id">
-                <v-list-item-title>
-                  {{ remote.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle>{{ remote.server }}</v-list-item-subtitle>
-                <template v-slot:prepend>
-                  <v-icon :color="remote.status === 'mounted' ? 'green' : 'red'">mdi-network</v-icon>
-                </template>
-                <template v-slot:append>
+          <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
+            <thead>
+              <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                <th style="white-space: nowrap; width: 32px"></th>
+                <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('name') }}</th>
+                <th style="white-space: nowrap">{{ $t('ip') }}</th>
+                <th style="white-space: nowrap">{{ $t('share') }}</th>
+                <th style="white-space: nowrap">{{ $t('type') }}</th>
+                <th style="white-space: nowrap">{{ $t('status') }}</th>
+                <th style="white-space: nowrap">{{ $t('automount') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="remote in remotes" :key="remote.id">
+                <td style="white-space: nowrap">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
+                      <v-icon v-bind="props" :color="remote.status === 'mounted' ? 'green' : 'red'" style="cursor: pointer">mdi-network</v-icon>
                     </template>
                     <v-list>
                       <v-list-item v-if="remote.status !== 'mounted'" @click="openChangeDialog(remote)">
+                        <template #prepend>
+                          <v-icon>mdi-text-box-edit</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="openDeleteDialog(remote)">
+                        <template #prepend>
+                          <v-icon>mdi-delete</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item v-if="remote.status === 'mounted'" @click="unmountRemote(remote)">
+                        <template #prepend>
+                          <v-icon>mdi-eject</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('unmount remote') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item v-if="remote.status !== 'mounted' && remote.status !== 'unavailable'" @click="mountRemote(remote)">
+                        <template #prepend>
+                          <v-icon>mdi-play</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('mount remote') }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ remote.name }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ remote.server }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ remote.share }}</td>
+                <td style="white-space: nowrap">
+                  <v-chip size="small" label>{{ remote.type?.toUpperCase() || '—' }}</v-chip>
+                </td>
+                <td style="white-space: nowrap">
+                  <v-chip :color="remote.status === 'mounted' ? 'green' : remote.status === 'unavailable' ? 'red' : 'onPrimary'" size="small" label>
+                    {{ remote.status || '—' }}
+                  </v-chip>
+                </td>
+                <td style="white-space: nowrap">
+                  <v-chip :color="remote.auto_mount ? 'green' : 'grey'" size="small" label>
+                    {{ remote.auto_mount ? $t('yes') : $t('no') }}
+                  </v-chip>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
         </v-card>
       </v-container>
     </v-container>
@@ -59,10 +88,8 @@
 
   <!-- New Remote Dialog -->
   <v-dialog v-model="newRemoteDialog.value" max-width="600px">
-    <v-card>
-      <v-card-title>{{ $t('create remote mount') }}</v-card-title>
+    <v-card :title="$t('create remote mount')" prepend-icon="mdi-plus">
       <v-card-text>
-        <v-form>
           <v-text-field v-model="newRemoteDialog.name" :label="$t('name')" required></v-text-field>
           <v-select v-model="newRemoteDialog.type" :items="['smb']" :label="$t('type')" required></v-select>
           <v-text-field v-model="newRemoteDialog.server" :label="$t('ip')" required></v-text-field>
@@ -81,7 +108,6 @@
           <!--<v-text-field v-model.number="newRemoteDialog.uid" :label="$t('uid')" type="number" required></v-text-field>
           <v-text-field v-model.number="newRemoteDialog.gid" :label="$t('gid')" type="number" required></v-text-field>-->
           <v-switch v-model="newRemoteDialog.auto_mount" :label="$t('automount')" inset color="green"></v-switch>
-        </v-form>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -94,8 +120,7 @@
 
   <!-- Change Dialog -->
   <v-dialog v-model="changeDialog.value" max-width="600px">
-    <v-card>
-      <v-card-title>{{ $t('edit remote mount') }}</v-card-title>
+    <v-card :title="$t('edit remote mount')" prepend-icon="mdi-pencil">
       <v-card-text>
         <v-form>
           <v-text-field v-model="changeDialog.name" :label="$t('name')" required></v-text-field>
@@ -129,8 +154,7 @@
 
   <!-- Delete Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="400">
-    <v-card>
-      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
+    <v-card :title="$t('confirm delete')" prepend-icon="mdi-delete">
       <v-card-text>
         {{ $t('are you sure you want to delete this remote mount?') }}
       </v-card-text>
