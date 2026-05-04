@@ -22,10 +22,11 @@
           <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
-                <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
+                <th style="white-space: nowrap; width: 32px"></th>
                 <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('name') }}</th>
                 <th style="white-space: nowrap">{{ $t('schedule') }}</th>
                 <th style="white-space: nowrap">{{ $t('command') }}</th>
+                <th style="white-space: nowrap">{{ $t('status') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -93,6 +94,11 @@
                 </td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ cronJob.schedule }}</td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ cronJob.command }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <v-chip :color="cronJob.enabled ? 'green' : 'blue'" text-color="white" size="small" label>
+                    {{ cronJob.enabled ? t('enabled') : t('disabled') }}
+                  </v-chip>
+                </td>
               </tr>
             </tbody>
           </v-table>
