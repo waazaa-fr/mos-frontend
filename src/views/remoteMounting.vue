@@ -32,7 +32,7 @@
                 <td style="white-space: nowrap">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-icon v-bind="props" :color="remote.status === 'mounted' ? 'green' : 'red'" style="cursor: pointer">{{ remote.status === 'mounted' ? 'mdi-network' : 'mdi-network-off' }}</v-icon>
+                      <v-icon v-bind="props" :color="remote.status === 'mounted' ? 'green' : 'blue'" style="cursor: pointer">{{ remote.status === 'mounted' ? 'mdi-network' : 'mdi-network-off' }}</v-icon>
                     </template>
                     <v-list>
                       <v-list-item v-if="remote.status !== 'mounted'" @click="openChangeDialog(remote)">
@@ -69,7 +69,7 @@
                   <v-chip size="small" label>{{ remote.type?.toUpperCase() || '—' }}</v-chip>
                 </td>
                 <td style="white-space: nowrap">
-                  <v-chip :color="remote.status === 'mounted' ? 'green' : remote.status === 'unavailable' ? 'red' : 'onPrimary'" size="small" label>
+                  <v-chip :color="remote.status === 'mounted' ? 'green' : 'blue'" size="small" label>
                     {{ remote.status || '—' }}
                   </v-chip>
                 </td>
