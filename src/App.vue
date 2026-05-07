@@ -49,11 +49,23 @@
               <v-list-item v-bind="props" prepend-icon="mdi-server" :title="$t('network access')" />
             </template>
             <v-list-item to="/shares" prepend-icon="mdi-share" :title="$t('shares')" />
-            <v-list-item v-if="!hideInactiveMenus || mosServices.remote_mounting?.enabled" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
+            <v-list-item
+              v-if="!hideInactiveMenus || mosServices.remote_mounting?.enabled"
+              :disabled="!mosServices.remote_mounting?.enabled"
+              to="/remoteMounting"
+              prepend-icon="mdi-cloud-sync"
+              :title="$t('remote mounting')"
+            />
           </v-list-group>
           <template v-else>
             <v-list-item to="/shares" prepend-icon="mdi-share" :title="$t('shares')" />
-            <v-list-item v-if="!hideInactiveMenus || mosServices.remote_mounting?.enabled" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
+            <v-list-item
+              v-if="!hideInactiveMenus || mosServices.remote_mounting?.enabled"
+              :disabled="!mosServices.remote_mounting?.enabled"
+              to="/remoteMounting"
+              prepend-icon="mdi-cloud-sync"
+              :title="$t('remote mounting')"
+            />
           </template>
           <v-list-item v-if="mosServices.hub?.enabled" to="/mosHub" prepend-icon="mdi-hub" :title="$t('mos hub')" />
           <v-list-group v-if="groupMenus">
@@ -84,6 +96,16 @@
           <v-list-item to="/mosSettings" prepend-icon="mdi-cog" :title="$t('settings')" />
           <v-list-item v-on:click="logoutDialog = true" prepend-icon="mdi-logout" :title="$t('logout')" />
         </v-list>
+        <template #append>
+          <div v-if="mosServices.tailscale?.online || mosServices.netbird?.online" class="d-flex justify-center flex-wrap ga-1 pt-2 pb-1">
+            <v-chip v-if="mosServices.tailscale?.online" size="x-small" color="success" prepend-icon="mdi-lock-outline" variant="tonal">Tailscale</v-chip>
+            <v-chip v-if="mosServices.netbird?.online" size="x-small" color="success" prepend-icon="mdi-lock-outline" variant="tonal">Netbird</v-chip>
+          </div>
+          <v-divider></v-divider>
+          <div class="pa-2 pb-3">
+            <div v-if="mosVersion" class="d-flex align-center justify-center ga-1 pt-2 text-caption text-disabled">{{ $t('mos') }}: {{ mosVersion }}</div>
+          </div>
+        </template>
       </v-navigation-drawer>
       <v-main>
         <router-view v-slot="{ Component }">
@@ -142,6 +164,7 @@ const notificationsBadge = ref(false);
 const hostname = ref('');
 const hideInactiveMenus = ref(localStorage.getItem('hideInactiveMenus') === 'true');
 const groupMenus = ref(localStorage.getItem('groupMenus') === 'true');
+const mosVersion = ref('');
 const RECONNECT_MAX_DELAY = 15000;
 const RECONNECT_BASE_DELAY = 1000;
 
@@ -366,6 +389,7 @@ const getHostname = async () => {
     if (!res.ok) throw new Error('API-Error');
     const result = await res.json();
     hostname.value = result.hostname || '';
+    mosVersion.value = result.mos?.version || '';
   } catch (e) {
     hostname.value = '';
   }
@@ -448,8 +472,8 @@ const subscribePush = async () => {
     if (permission !== 'granted') return;
 
     const registration = await navigator.serviceWorker.ready;
-    const vapidKey = await getVapidKey(); // wirft jetzt bei Fehler
-    
+    const vapidKey = await getVapidKey();
+
     const existing = await registration.pushManager.getSubscription();
     if (existing) return;
 
