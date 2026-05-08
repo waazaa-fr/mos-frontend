@@ -97,9 +97,9 @@
           <v-list-item v-on:click="logoutDialog = true" prepend-icon="mdi-logout" :title="$t('logout')" />
         </v-list>
         <template #append>
-          <div v-if="mosServices.tailscale?.online || mosServices.netbird?.online" class="d-flex justify-center flex-wrap ga-1 pt-2 pb-1">
-            <v-chip v-if="mosServices.tailscale?.online" size="x-small" color="success" prepend-icon="mdi-lock-outline" variant="tonal">Tailscale</v-chip>
-            <v-chip v-if="mosServices.netbird?.online" size="x-small" color="success" prepend-icon="mdi-lock-outline" variant="tonal">Netbird</v-chip>
+          <div v-if="mosServices.tailscale?.enabled || mosServices.netbird?.enabled" class="d-flex justify-center flex-wrap ga-1 pt-2 pb-1">
+            <v-chip v-if="mosServices.tailscale?.enabled" size="x-small" :color="mosServices.tailscale?.online ? 'success' : 'error'" :prepend-icon="mosServices.tailscale?.online ? 'mdi-lock-outline' : 'mdi-lock-off-outline'" variant="tonal">Tailscale</v-chip>
+            <v-chip v-if="mosServices.netbird?.enabled" size="x-small" :color="mosServices.netbird?.online ? 'success' : 'error'" :prepend-icon="mosServices.netbird?.online ? 'mdi-lock-outline' : 'mdi-lock-off-outline'" variant="tonal">Netbird</v-chip>
           </div>
           <v-divider></v-divider>
           <div class="pa-2 pb-3">
