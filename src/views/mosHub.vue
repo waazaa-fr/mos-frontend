@@ -591,7 +591,7 @@ const getHubRepositories = async () => {
 
 const setHubRepositories = async (repositories) => {
   overlay.value = true;
-  mosHubRepositoriesDialog.value = false;
+  
   try {
     const res = await fetch('/api/v1/mos/hub/repositories', {
       method: 'POST',
@@ -609,6 +609,7 @@ const setHubRepositories = async (repositories) => {
 
     showSnackbarSuccess(t('repositories changed successfully'));
     refreshRepositories();
+    mosHubRepositoriesDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

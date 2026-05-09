@@ -117,6 +117,12 @@
                             </template>
                             <v-list-item-title>{{ $t('pull stack images') }}</v-list-item-title>
                           </v-list-item>
+                          <v-list-item @click="updateDockerGroupContainers(group, true)">
+                            <template #prepend>
+                              <v-icon>mdi-update</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('force update stack') }}</v-list-item-title>
+                          </v-list-item>
                         </v-list>
 
                         <v-list v-else>
@@ -748,27 +754,6 @@
     </v-card>
   </v-dialog>
 
-  <!-- Docker Compose Dialog -->
-  <v-dialog v-model="createComposeStackDialog.value" max-width="800">
-    <v-card class="pa-0">
-      <v-card-title class="text-h6">{{ $t('docker compose') }}</v-card-title>
-      <v-card-text>
-        <v-text-field v-model="createComposeStackDialog.name" :label="$t('stack name')" required></v-text-field>
-        <v-textarea v-model="createComposeStackDialog.yaml" :label="$t('compose yaml')" rows="10" required></v-textarea>
-        <v-textarea v-model="createComposeStackDialog.env" :label="$t('environment variables')" rows="5"></v-textarea>
-        <v-text-field v-model="createComposeStackDialog.icon" :label="$t('icon url')"></v-text-field>
-        <v-text-field v-model="createComposeStackDialog.webui" :label="$t('web ui url')"></v-text-field>
-      </v-card-text>
-      <v-divider />
-      <v-card-actions>
-        <v-btn color="onPrimary" @click="createComposeStackDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="onPrimary" @click="createComposeStack()">
-          {{ $t('create') }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
   <!--Docker Compose Edit Dialog -->
   <v-dialog v-model="editComposeStackDialog.value" max-width="800">
     <v-card class="pa-0">
@@ -780,6 +765,7 @@
           <v-textarea v-model="editComposeStackDialog.env" :label="$t('environment variables')" rows="5"></v-textarea>
           <v-text-field v-model="editComposeStackDialog.icon" :label="$t('icon url')"></v-text-field>
           <v-text-field v-model="editComposeStackDialog.webui" :label="$t('web ui url')"></v-text-field>
+            <v-switch :label="$t('no autoupdate')" v-model="editComposeStackDialog.no_autoupdate" inset color="green" density="compact"></v-switch>
         </div>
       </v-card-text>
       <v-divider />
@@ -988,14 +974,6 @@ const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDocker
     await getDockerGroups();
   },
 });
-const createComposeStackDialog = reactive({
-  value: false,
-  name: '',
-  yaml: '',
-  env: '',
-  icon: '',
-  webui: '',
-});
 const editComposeStackDialog = reactive({
   value: false,
   name: '',
@@ -1003,6 +981,7 @@ const editComposeStackDialog = reactive({
   env: '',
   icon: '',
   webui: '',
+  no_autoupdate: false,
 });
 const removeComposeStackDialog = reactive({
   value: false,
@@ -1237,7 +1216,6 @@ const killDocker = async (name) => {
 };
 
 const removeDocker = async (name) => {
-  deleteDialog.value = false;
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/docker/mos/remove`, {
@@ -1258,6 +1236,7 @@ const removeDocker = async (name) => {
     getDockers();
     getDockerGroups();
     clearDeleteDialog();
+    deleteDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -1778,18 +1757,6 @@ const removeUnusedImage = async (imageId) => {
   }
 };
 
-const createComposeStack = async () => {
-  createComposeStackDialog.value = false;
-  const newCompose = {
-    name: createComposeStackDialog.name.trim(),
-    yaml: createComposeStackDialog.yaml,
-    env: createComposeStackDialog.env,
-    icon: createComposeStackDialog.icon,
-    webui: createComposeStackDialog.webui,
-  };
-  sendDockerWSCommand('compose-create', newCompose);
-};
-
 const startComposeStack = async (name) => {
   try {
     overlay.value = true;
@@ -1911,15 +1878,16 @@ const pullImagesForComposeStack = async (name) => {
 };
 
 const editComposeStack = async () => {
-  editComposeStackDialog.value = false;
   const updatedCompose = {
     name: editComposeStackDialog.name.trim(),
     yaml: editComposeStackDialog.yaml,
     env: editComposeStackDialog.env,
     icon: editComposeStackDialog.icon,
     webui: editComposeStackDialog.webui,
+    no_autoupdate: editComposeStackDialog.no_autoupdate,
   };
   sendDockerWSCommand('compose-update', updatedCompose);
+  editComposeStackDialog.value = false;
 };
 
 const getComposeStack = async (name) => {

@@ -1352,7 +1352,6 @@ const getPoolTypes = async () => {
 };
 
 const formatDisk = async () => {
-  formatDialog.value = false;
   const formatDiskData = {
     device: formatDialog.disk.name,
     filesystem: formatDialog.filesystem,
@@ -1380,6 +1379,7 @@ const formatDisk = async () => {
     clearFormatDialog();
     getPools();
     getUnassignedDisks();
+    formatDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -1589,7 +1589,6 @@ const createPoolSingle = async () => {
 };
 
 const deletePool = async (poolId) => {
-  deletePoolDialog.value = false;
   overlay.value = true;
 
   try {
@@ -1610,6 +1609,7 @@ const deletePool = async (poolId) => {
     getPools();
     getUnassignedDisks();
     getPoolTypes();
+    deletePoolDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -1700,7 +1700,6 @@ const mountPool = async (pool) => {
 };
 
 const mountPoolWithPassphrase = async (pool, passphrase) => {
-  passphraseDialog.value = false;
   overlay.value = true;
 
   try {
@@ -1720,6 +1719,7 @@ const mountPoolWithPassphrase = async (pool, passphrase) => {
     showSnackbarSuccess(t('pool mounted successfully'));
     getPools();
     getUnassignedDisks();
+    passphraseDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

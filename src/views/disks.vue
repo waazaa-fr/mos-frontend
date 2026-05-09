@@ -473,7 +473,7 @@ const sleepDisk = async (disk) => {
 };
 
 const formatDisk = async (disk) => {
-  formatDialog.value = false;
+
 
   const formatDiskData = {
     device: formatDialog.disk.name,
@@ -506,9 +506,9 @@ const formatDisk = async (disk) => {
       throw new Error(`${t('disk could not be formatted')}|$| ${errorDetails.error || t('unknown error')}`);
     }
     showSnackbarSuccess(t('disk formatted successfully'));
-
     clearFormatDialog();
     getDisks();
+    formatDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

@@ -669,7 +669,6 @@ const createShareNfs = async () => {
 };
 
 const updateShareSmb = async (shareDialog) => {
-  editSmbDialog.value = false;
   const payload = {
     comment: shareDialog.comment,
     enabled: shareDialog.enabled,
@@ -703,6 +702,7 @@ const updateShareSmb = async (shareDialog) => {
     showSnackbarSuccess(t('share updated successfully'));
     clearEditSmbDialog();
     getShares();
+    editSmbDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -712,7 +712,6 @@ const updateShareSmb = async (shareDialog) => {
 };
 
 const updateShareNfs = async (shareDialog) => {
-  editNfsDialog.value = false;
   const payload = {
     source: shareDialog.source,
     enabled: shareDialog.enabled,
@@ -742,6 +741,7 @@ const updateShareNfs = async (shareDialog) => {
     showSnackbarSuccess(t('nfs share updated successfully'));
     clearEditNfsDialog();
     getShares();
+    editNfsDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -751,7 +751,6 @@ const updateShareNfs = async (shareDialog) => {
 };
 
 const deleteShareSmb = async () => {
-  deleteSmbDialog.value = false;
   const payload = deleteSmbDialog.deleteDirectory ? { deleteDirectory: true } : {};
 
   try {
@@ -773,6 +772,7 @@ const deleteShareSmb = async () => {
     showSnackbarSuccess(t('share deleted successfully'));
     getShares();
     clearDeleteSmbDialog();
+    deleteSmbDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -782,7 +782,6 @@ const deleteShareSmb = async () => {
 };
 
 const deleteShareNfs = async () => {
-  deleteNfsDialog.value = false;
   const payload = {
     deleteDirectory: deleteNfsDialog.deleteDirectory,
     removePathRule: deleteNfsDialog.removePathRule,
@@ -807,6 +806,7 @@ const deleteShareNfs = async () => {
     showSnackbarSuccess(t('nfs share deleted successfully'));
     getShares();
     clearDeleteNfsDialog();
+    deleteNfsDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

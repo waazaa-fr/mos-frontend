@@ -256,12 +256,13 @@ const getUsers = async () => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('failed to load users'));
+      throw new Error(`${t('failed to load users')}|$| ${error.error || t('unknown error')}`);
     }
 
     users.value = await res.json();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     usersLoaded.value = true;
   }
@@ -311,7 +312,7 @@ const addUser = async () => {
 };
 
 const deleteUser = async (user) => {
-  deleteDialog.value = false;
+
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/auth/users/${user.id}`, {
@@ -320,17 +321,20 @@ const deleteUser = async (user) => {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
     });
-    overlay.value = false;
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('failed to delete user'));
+      throw new Error(`${t('failed to delete user')}|$| ${error.error || t('unknown error')}`);
     }
 
     showSnackbarSuccess(t('user successfully deleted'));
     getUsers();
+    deleteDialog.value = false;
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -362,19 +366,22 @@ const changeUser = async () => {
       },
       body: JSON.stringify(userData),
     });
-    overlay.value = false;
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('failed to update user'));
+      throw new Error(`${t('failed to update user')}|$| ${error.error || t('unknown error')}`);
     }
 
     showSnackbarSuccess(t('user successfully updated'));
     getUsers();
     changeDialog.value = false;
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
+
 };
 
 const changePasswordVisibility = () => {

@@ -1462,5 +1462,6 @@
   "compose template could not be fetched": "Compose Vorlage konnte nicht abgerufen werden",
   "disabled": "Deaktiviert",
   "server ip": "Server IP",
-  "no autoupdate": "Keine automatischen Updates"
+  "no autoupdate": "Keine automatischen Updates",
+  "force update stack": "Stack aktualisieren erzwingen"
 }

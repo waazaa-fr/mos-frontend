@@ -92,10 +92,14 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
+const { t } = useI18n();
+const router = useRouter();
 const overlay = ref(false);
 const props = defineProps({
   template: String,

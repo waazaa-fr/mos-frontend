@@ -200,7 +200,6 @@ const openDeleteDialog = (plugin) => {
 };
 
 const deletePlugin = async (plugin) => {
-  deleteDialog.value = false;
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/mos/plugins/delete/${plugin.name}`, {
@@ -217,6 +216,7 @@ const deletePlugin = async (plugin) => {
 
     showSnackbarSuccess(t('plugin deleted successfully'));
     await getPlugins();
+    deleteDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -227,7 +227,6 @@ const deletePlugin = async (plugin) => {
 };
 
 const updatePlugin = async (plugin) => {
-  deleteDialog.value = false;
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/mos/plugins/update`, {
@@ -246,6 +245,7 @@ const updatePlugin = async (plugin) => {
 
     showSnackbarSuccess(t('plugin update started successfully'));
     await getPlugins();
+    deleteDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

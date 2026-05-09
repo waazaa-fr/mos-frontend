@@ -430,7 +430,6 @@ const killLXC = async (name) => {
 };
 
 const createLXC = async () => {
-  createDialog.value = false;
   const newLXC = {
     name: createDialog.name,
     distribution: createDialog.distribution,
@@ -461,6 +460,7 @@ const createLXC = async () => {
     showSnackbarSuccess(t('lxc container created successfully'));
     getLXCs();
     clearCreateDialog();
+    createDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -470,7 +470,6 @@ const createLXC = async () => {
 };
 
 const removeLXC = async (name) => {
-  deleteDialog.value = false;
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/lxc/containers/${name}`, {
@@ -488,6 +487,7 @@ const removeLXC = async (name) => {
     showSnackbarSuccess(t('lxc container removed successfully'));
     getLXCs();
     clearDeleteDialog();
+    deleteDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

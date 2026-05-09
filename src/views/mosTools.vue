@@ -155,7 +155,6 @@ const showSpecialActions = ref(0);
 const overlay = ref(false);
 
 const rebootOS = async () => {
-  rebootDialog.value = false;
 
   try {
     overlay.value = true;
@@ -173,6 +172,7 @@ const rebootOS = async () => {
     }
 
     showSnackbarSuccess(t('reboot initiated successfully'));
+    rebootDialog.value = false;
     window.location.href = '/reboot.html';
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -183,7 +183,6 @@ const rebootOS = async () => {
 };
 
 const shutdownOS = async () => {
-  shutdownDialog.value = false;
 
   try {
     overlay.value = true;
@@ -200,6 +199,7 @@ const shutdownOS = async () => {
     }
 
     showSnackbarSuccess(t('shutdown initiated successfully'));
+    shutdownDialog.value = false;
     window.location.href = '/shutdown.html';
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');

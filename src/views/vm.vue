@@ -1567,7 +1567,6 @@ const openDeleteVmDialog = (name) => {
 const deleteVM = async () => {
   try {
     overlay.value = true;
-    deleteVmDialog.value = false;
 
     const url = new URL(`/api/v1/vm/machines/${deleteVmData.value.name}`, window.location.origin);
     if (deleteVmData.value.removeDisks) {
@@ -1591,6 +1590,7 @@ const deleteVM = async () => {
 
     showSnackbarSuccess(t('VM deleted successfully'));
     getVMs();
+    deleteVmDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
