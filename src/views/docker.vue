@@ -868,15 +868,15 @@
     <v-list>
       <v-list-item to="/docker/create">
         <template v-slot:prepend>
-          <v-icon>mdi-plus</v-icon>
+          <v-icon>mdi-docker</v-icon>
         </template>
-        <v-list-item-title>{{ $t('add container') }}</v-list-item-title>
+        <v-list-item-title>{{ $t('create docker container') }}</v-list-item-title>
       </v-list-item>
       <v-list-item to="/docker/compose">
         <template v-slot:prepend>
           <v-icon>mdi-toy-brick-plus</v-icon>
         </template>
-        <v-list-item-title>{{ $t('docker compose') }}</v-list-item-title>
+        <v-list-item-title>{{ $t('create compose stack') }}</v-list-item-title>
       </v-list-item>
       <v-list-item @click="openCreateGroupDialog()">
         <template v-slot:prepend>
@@ -2069,5 +2069,6 @@ const openEditComposeStackDialog = async (name) => {
   editComposeStackDialog.env = stack.env;
   editComposeStackDialog.icon = stack.icon;
   editComposeStackDialog.webui = stack.webui || '';
+  editComposeStackDialog.no_autoupdate = stack.no_autoupdate || false;
 };
 </script>

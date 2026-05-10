@@ -1463,5 +1463,7 @@
   "disabled": "Deaktiviert",
   "server ip": "Server IP",
   "no autoupdate": "Keine automatischen Updates",
-  "force update stack": "Stack aktualisieren erzwingen"
+  "force update stack": "Stack aktualisieren erzwingen",
+  "create compose stack": "Compose Stack erstellen",
+  "create docker container": "Docker Container erstellen"
 }
