@@ -66,31 +66,33 @@
                   <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                 </v-col>
                 <template v-if="!iface.ipv4[0].dhcp">
-                  <v-col cols="12" md="6">
+                  <v-col cols="12">
                     <v-row>
-                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
-                      <v-text-field
-                        :label="$t('cidr')"
-                        v-model="iface.ipv4[0].cidr"
-                        variant="outlined"
-                        hide-details="auto"
-                        class="ml-0"
-                        style="max-width: 120px; margin-top: 0"
-                        min="0"
-                        max="32"
-                        type="number"
-                      ></v-text-field>
+                      <v-col cols="12" md="6">
+                        <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field
+                          :label="$t('cidr')"
+                          v-model="iface.ipv4[0].cidr"
+                          variant="outlined"
+                          hide-details="auto"
+                          min="0"
+                          max="32"
+                          type="number"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field :label="$t('mtu')" v-model="iface.ipv4[0].mtu" variant="outlined" hide-details="auto" type="number"></v-text-field>
+                      </v-col>
                     </v-row>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-row>
-                      <v-col cols="12" md="4">
-                        <v-text-field :label="$t('mtu')" v-model="iface.ipv4[0].mtu" variant="outlined" hide-details="auto" type="number"></v-text-field>
+                      <v-col cols="12" md="6">
+                        <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="8">
+                      <v-col cols="12" md="6">
                         <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value" variant="outlined" hide-details="auto"></v-text-field>
                       </v-col>
                     </v-row>
@@ -180,31 +182,33 @@
                   <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                 </v-col>
                 <template v-if="!iface.ipv4[0].dhcp">
-                  <v-col cols="12" md="6">
+                  <v-col cols="12">
                     <v-row>
-                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
-                      <v-text-field
-                        :label="$t('cidr')"
-                        v-model="iface.ipv4[0].cidr"
-                        variant="outlined"
-                        hide-details="auto"
-                        class="ml-0"
-                        style="max-width: 120px; margin-top: 0"
-                        min="0"
-                        max="32"
-                        type="number"
-                      ></v-text-field>
+                      <v-col cols="12" md="6">
+                        <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field
+                          :label="$t('cidr')"
+                          v-model="iface.ipv4[0].cidr"
+                          variant="outlined"
+                          hide-details="auto"
+                          min="0"
+                          max="32"
+                          type="number"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field :label="$t('mtu')" v-model="iface.ipv4[0].mtu" variant="outlined" hide-details="auto" type="number"></v-text-field>
+                      </v-col>
                     </v-row>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-row>
-                      <v-col cols="12" md="4">
-                        <v-text-field :label="$t('mtu')" v-model="iface.ipv4[0].mtu" variant="outlined" hide-details="auto" type="number"></v-text-field>
+                      <v-col cols="12" md="6">
+                        <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="8">
+                      <v-col cols="12" md="6">
                         <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value" variant="outlined" hide-details="auto"></v-text-field>
                       </v-col>
                     </v-row>
@@ -275,31 +279,33 @@
                   <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                 </v-col>
                 <template v-if="!iface.ipv4[0].dhcp">
-                  <v-col cols="12" md="6">
+                  <v-col cols="12">
                     <v-row>
-                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
-                      <v-text-field
-                        :label="$t('cidr')"
-                        v-model="iface.ipv4[0].cidr"
-                        variant="outlined"
-                        hide-details="auto"
-                        class="ml-0"
-                        style="max-width: 120px; margin-top: 0"
-                        min="0"
-                        max="32"
-                        type="number"
-                      ></v-text-field>
+                      <v-col cols="12" md="6">
+                        <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" variant="outlined" hide-details="auto"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field
+                          :label="$t('cidr')"
+                          v-model="iface.ipv4[0].cidr"
+                          variant="outlined"
+                          hide-details="auto"
+                          min="0"
+                          max="32"
+                          type="number"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field :label="$t('mtu')" v-model="iface.ipv4[0].mtu" variant="outlined" hide-details="auto" type="number"></v-text-field>
+                      </v-col>
                     </v-row>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-row>
-                      <v-col cols="12" md="4">
-                        <v-text-field :label="$t('mtu')" v-model="iface.ipv4[0].mtu" variant="outlined" hide-details="auto" type="number"></v-text-field>
+                      <v-col cols="12" md="6">
+                        <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" variant="outlined" hide-details="auto"></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="8">
+                      <v-col cols="12" md="6">
                         <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value" variant="outlined" hide-details="auto"></v-text-field>
                       </v-col>
                     </v-row>
@@ -451,17 +457,21 @@
           <v-switch :label="$t('ipv4 dhcp')" v-model="addVlanDialog.ipv4.dhcp" inset density="compact" color="green"></v-switch>
           <template v-if="!addVlanDialog.ipv4.dhcp">
             <v-row>
-              <v-text-field :label="$t('ipv4 address')" v-model="addVlanDialog.ipv4.address" variant="outlined"></v-text-field>
-              <v-text-field :label="$t('cidr')" v-model="addVlanDialog.ipv4.cidr" variant="outlined" class="ml-0" style="max-width: 120px; margin-top: 0" min="0" max="32" type="number"></v-text-field>
-            </v-row>
-            <v-col cols="12" md="6" class="pb-0">
-              <v-text-field :label="$t('ipv4 gateway')" v-model="addVlanDialog.ipv4.gateway" variant="outlined"></v-text-field>
-            </v-col>
-            <v-row>
-              <v-col cols="12" md="4" class="pb-0">
+              <v-col cols="12" md="6">
+                <v-text-field :label="$t('ipv4 address')" v-model="addVlanDialog.ipv4.address" variant="outlined"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-text-field :label="$t('cidr')" v-model="addVlanDialog.ipv4.cidr" variant="outlined" min="0" max="32" type="number"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3">
                 <v-text-field :label="$t('mtu')" v-model="addVlanDialog.ipv4.mtu" variant="outlined" type="number"></v-text-field>
               </v-col>
-              <v-col cols="12" md="8" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-text-field :label="$t('ipv4 gateway')" v-model="addVlanDialog.ipv4.gateway" variant="outlined"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
                 <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="addVlanDialog.ipv4.dns" variant="outlined"></v-text-field>
               </v-col>
             </v-row>
