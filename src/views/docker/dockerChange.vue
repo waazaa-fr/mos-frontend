@@ -180,7 +180,7 @@
                         type="text"
                         v-model="port.host"
                         density="compact"
-                        :rules="[(v) => /^[0-9-]+$/.test(v) || 'Only a single port or a port range allowed']"
+                        :error="!!port.host && !/^[0-9.\-:]+$/.test(port.host)"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6">
@@ -189,7 +189,7 @@
                         type="text"
                         v-model="port.container"
                         density="compact"
-                        :rules="[(v) => /^[0-9-]+$/.test(v) || 'Only a single port or a port range allowed']"
+                        :error="!!port.container && !/^[0-9.\-:]+$/.test(port.container)"
                       ></v-text-field>
                     </v-col>
                   </v-row>
