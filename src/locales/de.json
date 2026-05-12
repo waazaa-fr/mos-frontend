@@ -1489,5 +1489,7 @@
   "no autoupdate": "Keine automatischen Updates",
   "force update stack": "Stack aktualisieren erzwingen",
   "create compose stack": "Compose Stack erstellen",
-  "create docker container": "Docker Container erstellen"
+  "create docker container": "Docker Container erstellen",
+  "system sounds": "Systemtöne",
+  "persist notifications": "Benachrichtigungen beibehalten"
 }

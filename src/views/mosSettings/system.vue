@@ -19,8 +19,15 @@
             <v-select :items="keymaps" :label="$t('keymap')" v-model="settingsSystem.keymap" item-title="keymap" item-value="keymap"></v-select>
             <v-select :items="timezones" :label="$t('timezone')" v-model="settingsSystem.timezone" item-title="timezone" item-value="timezone"></v-select>
             <v-select :items="governors" :label="$t('cpu governor')" v-model="settingsSystem.cpufreq.governor" item-title="governor" item-value="governor"></v-select>
-            <v-text-field :label="$t('global spindown (min)')" type="number" v-model="settingsSystem.global_spindown" hide-details="auto"></v-text-field>
-            <v-switch :label="$t('persist history')" color="green" inset v-model="settingsSystem.persist_history" hide-details="auto"></v-switch>
+            <v-text-field :label="$t('global spindown (min)')" type="number" v-model="settingsSystem.global_spindown"></v-text-field>
+            <v-row class="ga-2">
+              <v-col cols="12" sm="6">
+                <v-switch :label="$t('persist history')" color="green" inset v-model="settingsSystem.persist_history" hide-details="auto" density="compact"></v-switch>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-switch :label="$t('persist notifications')" color="green" inset v-model="settingsSystem.persist_notifications" hide-details="auto" density="compact"></v-switch>
+              </v-col>
+            </v-row>
             <v-divider class="my-2"></v-divider>
             <span class="text-title-medium font-weight-medium">{{ $t('web ui') }}</span>
             <v-switch :label="$t('https enabled')" color="green" inset v-model="settingsSystem.webui.https_enabled" density="compact" class="pt-4 pb-4" hide-details="auto"></v-switch>
@@ -55,7 +62,7 @@
             <v-text-field :label="$t('powerdown (min)')" type="number" v-model="settingsSystem.display.powerdown"></v-text-field>
             <v-text-field :label="$t('timeout (min)')" type="number" v-model="settingsSystem.display.timeout" class="mb-4"></v-text-field>
             <v-divider class="my-2"></v-divider>
-            <span class="text-title-medium font-weight-medium">{{ $t('notification sounds') }}</span>
+            <span class="text-title-medium font-weight-medium">{{ $t('system sounds') }}</span>
             <v-switch class="pt-2" :label="$t('sound on reboot')" color="green" inset v-model="settingsSystem.notification_sound.reboot" hide-details="auto" density="compact"></v-switch>
             <v-switch :label="$t('sound on shutdown')" color="green" inset v-model="settingsSystem.notification_sound.shutdown" density="compact" hide-details="auto"></v-switch>
             <v-switch :label="$t('sound on startup')" color="green" inset v-model="settingsSystem.notification_sound.startup" density="compact"></v-switch>
@@ -278,6 +285,7 @@ const settingsSystem = ref({
   keymap: '',
   timezone: '',
   persist_history: true,
+  persist_notifications: false,
   ntp: {
     enabled: false,
     mode: '',
