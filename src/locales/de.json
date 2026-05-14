@@ -797,6 +797,7 @@
   "disk put to sleep successfully": "Festplatte erfolgreich in den Ruhezustand versetzt",
   "wake up": "Aufwecken",
   "sleep": "Ruhezustand",
+  "grub": "GRUB",
   "edit grub.cfg": "grub.cfg bearbeiten",
   "edit config": "Konfiguration bearbeiten",
   "read": "Gelesen",
@@ -1491,5 +1492,6 @@
   "create compose stack": "Compose Stack erstellen",
   "create docker container": "Docker Container erstellen",
   "system sounds": "Systemtöne",
-  "persist notifications": "Benachrichtigungen beibehalten"
+  "persist notifications": "Benachrichtigungen beibehalten",
+  "localmaster": "Localmaster"
 }

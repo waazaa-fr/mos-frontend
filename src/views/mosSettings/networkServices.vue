@@ -15,22 +15,23 @@
       <v-container fluid class="pa-0">
         <v-card fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text>
-            <v-row>
+            <v-row no-gutters>
               <v-col cols="12" md="6">
                 <v-switch :label="$t('ssh')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.ssh.enabled"></v-switch>
                 <v-switch :label="$t('nfs')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.nfs.enabled"></v-switch>
-                <v-switch :label="$t('dnsmasq')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.dnsmasq.enabled"></v-switch>
+                <v-switch :label="$t('remote mounting')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.remote_mounting.enabled"></v-switch>
               </v-col>
               <v-col cols="12" md="6">
                 <v-switch :label="$t('nut')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.nut.enabled"></v-switch>
-                <v-switch :label="$t('remote mounting')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.remote_mounting.enabled"></v-switch>
+                <v-switch :label="$t('dnsmasq')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.dnsmasq.enabled"></v-switch>
               </v-col>
             </v-row>
             <v-divider class="my-4"></v-divider>
             <span class="text-title-medium font-weight-medium">{{ $t('samba') }}</span>
-            <v-row>
+            <v-row no-gutters class="pt-2 pb-2">
               <v-col cols="12" md="6">
                 <v-switch :label="$t('samba')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.samba.enabled"></v-switch>
+                <v-switch :label="$t('localmaster')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.samba.localmaster"></v-switch>
               </v-col>
               <v-col cols="12" md="6">
                 <v-switch
@@ -48,7 +49,7 @@
             <v-divider class="my-4"></v-divider>
             <span class="text-title-medium font-weight-medium">{{ $t('tailscale') }}</span>
             <v-chip size="small" v-if="settingsNetwork.tailscale.online" color="green">{{ $t('online') }}</v-chip>
-            <v-row>
+            <v-row no-gutters class="pt-2 pb-2">
               <v-col cols="12" md="6">
                 <v-switch :label="$t('tailscale')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.tailscale.enabled"></v-switch>
               </v-col>
@@ -58,8 +59,9 @@
             </v-row>
             <v-text-field class="mt-2" :label="$t('tailscale params')" v-model="settingsNetwork.tailscale.tailscaled_params" hide-details="auto"></v-text-field>
             <v-divider class="my-4"></v-divider>
-            <span class="text-title-medium font-weight-medium">{{ $t('netbird') }}</span> <v-chip size="small" v-if="settingsNetwork.netbird.online" color="green">{{ $t('online') }}</v-chip>
-            <v-row>
+            <span class="text-title-medium font-weight-medium">{{ $t('netbird') }}</span>
+            <v-chip size="small" v-if="settingsNetwork.netbird.online" color="green">{{ $t('online') }}</v-chip>
+            <v-row no-gutters class="pt-2 pb-2">
               <v-col cols="12" md="6">
                 <v-switch :label="$t('netbird')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.netbird.enabled"></v-switch>
               </v-col>
@@ -97,6 +99,7 @@ const settingsNetwork = ref({
   samba: {
     enabled: false,
     workgroup: '',
+    localmaster: false,
   },
   samba_discovery: {
     enabled: false,

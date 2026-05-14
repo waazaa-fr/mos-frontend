@@ -14,15 +14,30 @@
       </v-container>
       <v-container fluid class="pa-0">
         <v-card class="pa-0" style="margin-bottom: 80px">
-          <v-card-text>
-            <v-btn color="primary" rounded @click="installToDiskDialog.value = true">
-              {{ $t('install to disk') }}
-            </v-btn>
+          <v-card-text class="pb-2">
+            <span class="text-title-medium font-weight-medium">{{ $t('install to disk') }}</span>
+            <p class="text-body-2 text-medium-emphasis mt-1 mb-3">{{ $t('transfer usb data to disk device') }}</p>
+            <v-row no-gutters>
+              <v-col cols="12" md="4" lg="3">
+                <v-btn color="primary" rounded size="large" block prepend-icon="mdi-harddisk-plus" @click="installToDiskDialog.value = true">
+                  {{ $t('install to disk') }}
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
-          <v-card-text>
-            <v-btn color="primary" rounded @click="openFileEditor('/boot/grub/grub.cfg')">
-              {{ $t('edit grub.cfg') }}
-            </v-btn>
+
+          <v-divider class="my-2"></v-divider>
+
+          <v-card-text class="pt-2">
+            <span class="text-title-medium font-weight-medium">{{ $t('grub') }}</span>
+            <p class="text-body-2 text-medium-emphasis mt-1 mb-3">{{ $t('edit grub.cfg') }}</p>
+            <v-row no-gutters>
+              <v-col cols="12" md="4" lg="3">
+                <v-btn color="primary" rounded size="large" block prepend-icon="mdi-file-document-edit-outline" @click="openFileEditor('/boot/grub/grub.cfg')">
+                  {{ $t('edit grub.cfg') }}
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
       </v-container>
