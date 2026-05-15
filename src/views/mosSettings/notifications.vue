@@ -19,7 +19,7 @@
             <v-tabs v-if="providerNames.length > 0" v-model="selectedProvider" bg-color="transparent" color="primary" class="mb-3" show-arrows>
               <v-tab v-for="provider in providerNames" :key="`tab-${provider}`" :value="provider">
                 <div class="d-flex align-center ga-2">
-                  <span>{{ provider }}</span>
+                  <span>{{ provider === EMAIL_PROVIDER ? $t('email') : provider }}</span>
                   <v-chip size="x-small" :color="providers[provider]?.enabled ? 'green' : 'default'" variant="tonal">
                     {{ providers[provider]?.enabled ? $t('enabled') : $t('disabled') }}
                   </v-chip>
@@ -32,61 +32,86 @@
 
             <v-window v-if="providerNames.length > 0" v-model="selectedProvider">
               <v-window-item v-for="provider in providerNames" :key="`window-${provider}`" :value="provider">
-                <v-switch v-model="providers[provider].enabled" :label="$t('enabled')" color="green" density="compact" inset hide-details="auto"></v-switch>
-                <v-text-field v-model="providers[provider].user" :label="$t('user')" class="mt-4" hide-details="auto"></v-text-field>
-                <v-text-field v-model="providers[provider].token" :label="$t('token')" class="mt-4" hide-details="auto"></v-text-field>
-                <v-text-field v-model="providers[provider].url" :label="$t('url')" class="mt-4" hide-details="auto"></v-text-field>
-                <v-select v-model="providers[provider].method" :items="getMethodOptions(provider)" :label="$t('method')" class="mt-4" hide-details="auto"></v-select>
-                <v-textarea
-                  v-model="jsonEditors[provider].headers"
-                  :label="$t('headers (json)')"
-                  class="mt-4"
-                  rows="4"
-                  auto-grow
-                  density="compact"
-                  hide-details="auto"
-                  :error="!isJsonValid(provider, 'headers')"
-                  :error-messages="!isJsonValid(provider, 'headers') ? $t('invalid json') : ''"
-                ></v-textarea>
-                <v-textarea
-                  v-model="jsonEditors[provider].body"
-                  :label="$t('body (json)')"
-                  class="mt-4"
-                  rows="7"
-                  auto-grow
-                  density="compact"
-                  hide-details="auto"
-                  :error="!isJsonValid(provider, 'body')"
-                  :error-messages="!isJsonValid(provider, 'body') ? $t('invalid json') : ''"
-                ></v-textarea>
-                <v-textarea
-                  v-model="jsonEditors[provider].alert_mapping"
-                  :label="$t('alert mapping (json)')"
-                  class="mt-4"
-                  rows="4"
-                  auto-grow
-                  density="compact"
-                  hide-details="auto"
-                  :error="!isJsonValid(provider, 'alert_mapping')"
-                  :error-messages="!isJsonValid(provider, 'alert_mapping') ? $t('invalid json') : ''"
-                ></v-textarea>
-                <v-textarea
-                  v-model="jsonEditors[provider].color_prio"
-                  :label="$t('color priority (json)')"
-                  class="mt-4"
-                  rows="4"
-                  auto-grow
-                  density="compact"
-                  hide-details="auto"
-                  :error="!isJsonValid(provider, 'color_prio')"
-                  :error-messages="!isJsonValid(provider, 'color_prio') ? $t('invalid json') : ''"
-                ></v-textarea>
+                <template v-if="provider === EMAIL_PROVIDER">
+                  <v-switch v-model="providers[provider].enabled" :label="$t('enabled')" color="green" density="compact" inset hide-details="auto"></v-switch>
+                  <v-text-field v-model="providers[provider].smtp_host" :label="$t('smtp host')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field v-model.number="providers[provider].smtp_port" :label="$t('smtp port')" type="number" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-switch v-model="providers[provider].smtp_tls" :label="$t('smtp tls')" color="green" density="compact" inset class="mt-2" hide-details="auto"></v-switch>
+                  <v-text-field v-model="providers[provider].smtp_user" :label="$t('smtp user')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field v-model="providers[provider].smtp_password" :label="$t('smtp password')" type="password" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field v-model="providers[provider].from" :label="$t('sender')" type="email" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field :model-value="getEmailToValue()" @update:model-value="setEmailToValue" :label="$t('receiver')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field v-model="providers[provider].subject" :label="$t('subject')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-textarea v-model="providers[provider].body" :label="$t('body')" class="mt-4" rows="6" auto-grow hide-details="auto"></v-textarea>
+                  <v-textarea
+                    v-model="jsonEditors[provider].alert_mapping"
+                    :label="$t('alert mapping (json)')"
+                    class="mt-4"
+                    rows="4"
+                    auto-grow
+                    density="compact"
+                    hide-details="auto"
+                    :error="!isJsonValid(provider, 'alert_mapping')"
+                    :error-messages="!isJsonValid(provider, 'alert_mapping') ? $t('invalid json') : ''"
+                  ></v-textarea>
+                </template>
+                <template v-else>
+                  <v-switch v-model="providers[provider].enabled" :label="$t('enabled')" color="green" density="compact" inset hide-details="auto"></v-switch>
+                  <v-text-field v-model="providers[provider].user" :label="$t('user')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field v-model="providers[provider].token" :label="$t('token')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-text-field v-model="providers[provider].url" :label="$t('url')" class="mt-4" hide-details="auto"></v-text-field>
+                  <v-select v-model="providers[provider].method" :items="getMethodOptions(provider)" :label="$t('method')" class="mt-4" hide-details="auto"></v-select>
+                  <v-textarea
+                    v-model="jsonEditors[provider].headers"
+                    :label="$t('headers (json)')"
+                    class="mt-4"
+                    rows="4"
+                    auto-grow
+                    density="compact"
+                    hide-details="auto"
+                    :error="!isJsonValid(provider, 'headers')"
+                    :error-messages="!isJsonValid(provider, 'headers') ? $t('invalid json') : ''"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="jsonEditors[provider].body"
+                    :label="$t('body (json)')"
+                    class="mt-4"
+                    rows="7"
+                    auto-grow
+                    density="compact"
+                    hide-details="auto"
+                    :error="!isJsonValid(provider, 'body')"
+                    :error-messages="!isJsonValid(provider, 'body') ? $t('invalid json') : ''"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="jsonEditors[provider].alert_mapping"
+                    :label="$t('alert mapping (json)')"
+                    class="mt-4"
+                    rows="4"
+                    auto-grow
+                    density="compact"
+                    hide-details="auto"
+                    :error="!isJsonValid(provider, 'alert_mapping')"
+                    :error-messages="!isJsonValid(provider, 'alert_mapping') ? $t('invalid json') : ''"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="jsonEditors[provider].color_prio"
+                    :label="$t('color priority (json)')"
+                    class="mt-4"
+                    rows="4"
+                    auto-grow
+                    density="compact"
+                    hide-details="auto"
+                    :error="!isJsonValid(provider, 'color_prio')"
+                    :error-messages="!isJsonValid(provider, 'color_prio') ? $t('invalid json') : ''"
+                  ></v-textarea>
 
-                <div class="mt-6">
-                  <v-btn color="red" variant="text" size="small" @click="confirmDeleteProvider(provider)" prepend-icon="mdi-delete">
-                    {{ $t('delete provider') }}
-                  </v-btn>
-                </div>
+                  <div class="mt-6">
+                    <v-btn color="red" variant="text" size="small" @click="confirmDeleteProvider(provider)" prepend-icon="mdi-delete">
+                      {{ $t('delete provider') }}
+                    </v-btn>
+                  </div>
+                </template>
               </v-window-item>
             </v-window>
 
@@ -99,25 +124,24 @@
     </v-container>
   </v-container>
 
-  <v-fab @click="setNotificationProviders()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
-    <v-icon>mdi-content-save</v-icon>
-  </v-fab>
-
   <v-dialog v-model="showAddProviderDialog" max-width="500">
     <v-card :title="$t('create new provider')" prepend-icon="mdi-plus">
       <v-card-text>
-        <v-text-field
-          v-model="newProviderName"
-          :label="$t('provider name')"
-          outlined
-          hide-details="auto"
-          @keyup.enter="createNewProvider()"
-        ></v-text-field>
+        <v-text-field v-model="newProviderName" :label="$t('provider name')" outlined hide-details="auto" @keyup.enter="createNewProvider()"></v-text-field>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="onPrimary" variant="text" @click="showAddProviderDialog = false; newProviderName = ''">{{ $t('cancel') }}</v-btn>
+        <v-btn
+          color="onPrimary"
+          variant="text"
+          @click="
+            showAddProviderDialog = false;
+            newProviderName = '';
+          "
+        >
+          {{ $t('cancel') }}
+        </v-btn>
         <v-btn color="onPrimary" @click="createNewProvider()">{{ $t('create') }}</v-btn>
       </v-card-actions>
     </v-card>
@@ -126,7 +150,9 @@
   <v-dialog v-model="showDeleteDialog" max-width="500">
     <v-card :title="$t('delete provider')" prepend-icon="mdi-delete">
       <v-card-text>
-        {{ $t('are you sure you want to delete provider') }} <strong>{{ providerToDelete }}</strong>?
+        {{ $t('are you sure you want to delete provider') }}
+        <strong>{{ providerToDelete }}</strong>
+        ?
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
@@ -136,6 +162,10 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <v-fab @click="setNotificationProviders()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+    <v-icon>mdi-content-save</v-icon>
+  </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -149,8 +179,8 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
-
 const overlay = ref(false);
+const EMAIL_PROVIDER = 'email';
 const providers = ref({});
 const jsonEditors = ref({});
 const selectedProvider = ref(null);
@@ -161,7 +191,27 @@ const providerToDelete = ref(null);
 const originalProviderNames = ref(new Set());
 const httpMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
-const providerNames = computed(() => Object.keys(providers.value));
+const providerNames = computed(() => {
+  const names = Object.keys(providers.value);
+  if (names.includes(EMAIL_PROVIDER)) {
+    return [EMAIL_PROVIDER, ...names.filter((name) => name !== EMAIL_PROVIDER)];
+  }
+  return names;
+});
+
+const getDefaultEmailProvider = () => ({
+  enabled: false,
+  smtp_host: '',
+  smtp_port: 587,
+  smtp_tls: true,
+  smtp_user: '',
+  smtp_password: '',
+  from: '',
+  to: [],
+  subject: '{{.Title}}',
+  body: '{{.Message}}',
+  alert_mapping: {},
+});
 
 const templates = () => ({
   Discord: {
@@ -233,14 +283,32 @@ const initializeEditors = (data) => {
   }
 
   jsonEditors.value = nextEditors;
-  const names = Object.keys(providers.value);
+  const names = providerNames.value;
   if (names.length > 0 && (!selectedProvider.value || !providers.value[selectedProvider.value])) {
     selectedProvider.value = names[0];
   }
 };
 
+const getEmailToValue = () => {
+  const to = providers.value[EMAIL_PROVIDER]?.to;
+  return Array.isArray(to) ? to.join(', ') : '';
+};
+
+const setEmailToValue = (value) => {
+  if (!providers.value[EMAIL_PROVIDER]) {
+    return;
+  }
+  providers.value[EMAIL_PROVIDER].to = String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+};
+
 const applyDefaultTemplate = () => {
-  initializeEditors(templates());
+  initializeEditors({
+    [EMAIL_PROVIDER]: getDefaultEmailProvider(),
+    ...templates(),
+  });
   showSnackbarSuccess(t('provider template applied'));
 };
 
@@ -313,6 +381,11 @@ const confirmDeleteProvider = (providerName) => {
 };
 
 const deleteProvider = async () => {
+  if (providerToDelete.value === EMAIL_PROVIDER) {
+    showDeleteDialog.value = false;
+    providerToDelete.value = null;
+    return;
+  }
 
   try {
     overlay.value = true;
@@ -330,7 +403,6 @@ const deleteProvider = async () => {
       throw new Error(error.error || t('unknown error'));
     }
 
-    // Remove from local state
     delete providers.value[providerName];
     delete jsonEditors.value[providerName];
     originalProviderNames.value.delete(providerName);
@@ -358,6 +430,11 @@ const safeParse = (value) => {
   }
 };
 
+const isValidEmailAddress = (value) => {
+  const normalized = String(value || '').trim();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
+};
+
 const isJsonValid = (providerName, fieldName) => {
   const providerEditor = jsonEditors.value[providerName];
   if (!providerEditor || typeof providerEditor[fieldName] !== 'string') {
@@ -379,6 +456,10 @@ const buildPayload = () => {
   const invalidFields = [];
 
   for (const providerName of Object.keys(providers.value)) {
+    if (providerName === EMAIL_PROVIDER) {
+      continue;
+    }
+
     const provider = providers.value[providerName];
     const editorFields = jsonEditors.value[providerName] || {};
     const parseHeaders = safeParse(editorFields.headers ?? '{}');
@@ -395,7 +476,7 @@ const buildPayload = () => {
       payloads.push({
         name: providerName.toLowerCase(),
         enabled: provider.enabled ?? false,
-            user: provider.user ?? '',
+        user: provider.user ?? '',
         token: provider.token ?? '',
         url: provider.url ?? '',
         method: provider.method ?? 'POST',
@@ -414,22 +495,71 @@ const buildPayload = () => {
   return payloads;
 };
 
+const buildEmailPayload = () => {
+  const emailProvider = providers.value[EMAIL_PROVIDER] || getDefaultEmailProvider();
+  const parseAlertMapping = safeParse(jsonEditors.value[EMAIL_PROVIDER]?.alert_mapping ?? '{}');
+  const sender = String(emailProvider.from ?? '').trim();
+  const receivers = (Array.isArray(emailProvider.to) ? emailProvider.to : [])
+    .map((item) => String(item || '').trim())
+    .filter((item) => item.length > 0);
+
+  if (!parseAlertMapping.valid) {
+    throw new Error(`${t('invalid provider json')}|$|${EMAIL_PROVIDER}: alert_mapping`);
+  }
+
+  if (!isValidEmailAddress(sender)) {
+    throw new Error(`${t('notification settings could not be saved')}|$| ${t('sender must be valid email')}`);
+  }
+
+  if (receivers.some((email) => !isValidEmailAddress(email))) {
+    throw new Error(`${t('notification settings could not be saved')}|$| ${t('receiver must be valid email')}`);
+  }
+
+  return {
+    enabled: emailProvider.enabled ?? false,
+    smtp_host: emailProvider.smtp_host ?? '',
+    smtp_port: Number(emailProvider.smtp_port ?? 587),
+    smtp_tls: emailProvider.smtp_tls ?? true,
+    smtp_user: emailProvider.smtp_user ?? '',
+    smtp_password: emailProvider.smtp_password ?? '',
+    from: sender,
+    to: receivers,
+    subject: emailProvider.subject ?? '{{.Title}}',
+    body: emailProvider.body ?? '{{.Message}}',
+    alert_mapping: parseAlertMapping.value,
+  };
+};
+
 const getNotificationProviders = async () => {
   try {
     overlay.value = true;
-    const res = await fetch('/api/v1/mos/settings/notifications/providers', {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
+    const [providersRes, emailRes] = await Promise.all([
+      fetch('/api/v1/mos/settings/notifications/providers', {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        },
+      }),
+      fetch('/api/v1/mos/settings/notifications/email', {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        },
+      }),
+    ]);
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('notification providers could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    if (!providersRes.ok) {
+      const error = await providersRes.json();
+      throw new Error(`${t('notification settings could not be loaded')}|$| ${error.error || t('unknown error')}`);
     }
 
-    const data = await res.json();
+    if (!emailRes.ok) {
+      const error = await emailRes.json();
+      throw new Error(`${t('notification settings could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    const data = await providersRes.json();
+    const emailData = await emailRes.json();
     let providersData = {};
 
     if (Array.isArray(data)) {
@@ -441,12 +571,20 @@ const getNotificationProviders = async () => {
       providersData = data;
     }
 
+    const normalizedEmailData = emailData && typeof emailData === 'object' ? emailData : getDefaultEmailProvider();
+
     if (!providersData || Object.keys(providersData).length === 0) {
-      initializeEditors(templates());
+      initializeEditors({
+        [EMAIL_PROVIDER]: normalizedEmailData,
+        ...templates(),
+      });
       return;
     }
 
-    initializeEditors(providersData);
+    initializeEditors({
+      ...providersData,
+      [EMAIL_PROVIDER]: normalizedEmailData,
+    });
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -458,7 +596,22 @@ const getNotificationProviders = async () => {
 const setNotificationProviders = async () => {
   try {
     overlay.value = true;
+    const emailPayload = buildEmailPayload();
     const payloads = buildPayload();
+
+    const emailRes = await fetch('/api/v1/mos/settings/notifications/email', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    });
+
+    if (!emailRes.ok) {
+      const error = await emailRes.json();
+      throw new Error(`${t('notification settings could not be saved')}|$| ${error.error || t('unknown error')}`);
+    }
 
     for (const payload of payloads) {
       const providerName = payload.name;
@@ -473,11 +626,11 @@ const setNotificationProviders = async () => {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(`${t('notification providers could not be saved')}|$| ${error.error || t('unknown error')}`);
+        throw new Error(`${t('notification settings could not be saved')}|$| ${error.error || t('unknown error')}`);
       }
     }
 
-    showSnackbarSuccess(t('notification providers saved successfully'));
+    showSnackbarSuccess(t('notification settings saved successfully'));
     emit('refresh-drawer');
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
