@@ -1504,5 +1504,11 @@
   "receiver": "Receiver",
   "sender": "Sender",
   "receiver must be valid email": "Receiver must be a valid email address",
-  "sender must be valid email": "Sender must be a valid email address"
+  "sender must be valid email": "Sender must be a valid email address",
+  "used docker ports": "Used Docker Ports",
+  "no occupied ports found": "No occupied ports found",
+  "show used ports": "Show used ports",
+  "restarting": "restarting",
+  "exited": "exited",
+  "dead": "dead"
 }

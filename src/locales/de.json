@@ -1503,6 +1503,12 @@
   "localmaster": "Localmaster",
   "receiver": "Empfänger",
   "sender": "Absender",
-  "receiver must be valid email": "Empfänger muss eine gültige E-Mail-Adresse sein",
-  "sender must be valid email": "Absender muss eine gültige E-Mail-Adresse sein"
+  "receiver must be valid email": "Empfänger muss eine gültige e-Mail Adresse sein",
+  "sender must be valid email": "Absender muss eine gültige e-Mail Adresse sein",
+  "used docker ports": "Verwendete Docker Ports",
+  "no occupied ports found": "Keine belegten Ports gefunden",
+  "show used ports": "Verwendete Ports anzeigen",
+  "restarting": "wird neu gestartet",
+  "exited": "beendet",
+  "dead": "tot"
 }

@@ -8,37 +8,39 @@
           </v-btn>
         </v-toolbar>
         <div class="pa-4">
-          Hier sind dann Ichis Fancy Ports aufgelistet:
-          <br />
-          - Port 80: HTTP
-          <br />
-          - Port 443: HTTPS
-          <br />
-          - Port 22: SSH
-          <br />
-          - Port 3306: MySQL
-          <br />
-          - Port 6379: Redis
-          <br />
-          - Port 27017: MongoDB
-          <br />
-          - Port 8080: Alternative HTTP
-          <br />
-          - Port 8443: Alternative HTTPS
-          <br />
-          - Port 21: FTP
-          <br />
-          - Port 25: SMTP
-          <br />
-          - Port 53: DNS
-          <br />
-          - Port 110: POP3
-          <br />
-          - Port 143: IMAP
-          <br />
-          - Port 5900: VNC
-          <br />
-          - Port 6379: Redis
+          <div class="d-flex align-center justify-space-between mb-2">
+            <div class="text-subtitle-2 font-weight-medium">{{ $t('used docker ports') }}</div>
+            {{ usedDockerPorts.length }}
+          </div>
+
+          <v-alert v-if="!usedDockerPorts.length" type="info" variant="tonal" density="compact" class="mt-2">
+            {{ $t('no occupied ports found') }}
+          </v-alert>
+
+          <div v-else style="overflow-x: auto">
+            <v-table density="compact" class="bg-transparent">
+              <thead>
+                <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                  <th style="width: 78px; padding: 4px 8px">{{ $t('port') }}</th>
+                  <th style="padding: 4px 8px">{{ $t('container') }}</th>
+                  <th style="width: 108px; padding: 4px 8px">{{ $t('status') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in usedDockerPorts" :key="`${item.name}-${item.port}-${item.proto}-${index}`">
+                  <td style="padding: 6px 8px">
+                    {{ item.port }}
+                  </td>
+                  <td style="padding: 6px 8px" class="font-weight-medium">{{ item.name || $t('unknown') }}</td>
+                  <td style="padding: 6px 8px">
+                    <v-chip size="x-small" :color="dockerStateColor(item.status)" variant="tonal">
+                      {{ item.status }}
+                    </v-chip>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </div>
         </div>
       </template>
     </v-navigation-drawer>
@@ -184,10 +186,10 @@
               <v-col cols="12" class="d-flex align-center justify-space-between">
                 <span class="text-title-medium font-weight-medium">{{ $t('ports') }}</span>
                 <v-spacer />
-                <!--<v-btn variant="text" size="small" class="ma-1 pa-0 float-right" style="min-width: 0; color: green" @click="sidePanel.open = true" title="inspect" aria-label="inspect">
+                <v-btn variant="text" size="small" class="ma-1 pa-0 float-right" style="min-width: 0; color: green" @click="sidePanel.open = true" title="inspect" aria-label="inspect">
                   <v-icon size="18" class="mr-1">mdi-eye</v-icon>
                   {{ $t('inspect') }}
-                </v-btn>-->
+                </v-btn>
                 <v-btn
                   variant="text"
                   size="small"
@@ -235,22 +237,10 @@
                   </v-row>
                   <v-row class="mt-n2">
                     <v-col cols="6">
-                      <v-text-field
-                        :label="$t('host')"
-                        type="text"
-                        v-model="port.host"
-                        density="compact"
-                        :error="!!port.host && !/^[0-9.\-:]+$/.test(port.host)"
-                      ></v-text-field>
+                      <v-text-field :label="$t('host')" type="text" v-model="port.host" density="compact" :error="!!port.host && !/^[0-9.\-:]+$/.test(port.host)"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field
-                        :label="$t('container')"
-                        type="text"
-                        v-model="port.container"
-                        density="compact"
-                        :error="!!port.container && !/^[0-9.\-:]+$/.test(port.container)"
-                      ></v-text-field>
+                      <v-text-field :label="$t('container')" type="text" v-model="port.container" density="compact" :error="!!port.container && !/^[0-9.\-:]+$/.test(port.container)"></v-text-field>
                     </v-col>
                   </v-row>
                   <v-row class="mt-n2">
@@ -588,6 +578,7 @@ const sidePanel = ref({
   component: null,
   props: {},
 });
+const usedDockerPorts = ref([]);
 
 onMounted(() => {
   window.scrollTo(0, 0);
@@ -670,11 +661,12 @@ const getDockerNetworks = async () => {
 const getDockerContainers = async () => {
   try {
     loadingContainers.value = true;
+    const authHeaders = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
 
     const res = await fetch('/api/v1/docker/containers/json?all=true', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
+      headers: authHeaders,
     });
 
     if (!res.ok) {
@@ -689,8 +681,89 @@ const getDockerContainers = async () => {
     }));
 
     containerOptions.value.sort((a, b) => a.name.localeCompare(b.name));
+
+    const portsFromSummary = containers.flatMap((container) => {
+      const ports = Array.isArray(container?.Ports) ? container.Ports : [];
+
+      return ports
+        .map((binding) => {
+          const hostPort = binding?.PublicPort;
+          if (hostPort == null || hostPort === '') return null;
+
+          const port = Number(hostPort);
+          if (!Number.isFinite(port)) return null;
+
+          return {
+            port,
+            proto: String(binding?.Type || ''),
+            name: (container?.Names?.[0] || '').replace(/^\//, ''),
+            status: container?.State || '',
+          };
+        })
+        .filter(Boolean);
+    });
+
+    const notRunningContainers = containers.filter((container) => String(container?.State || '').toLowerCase() !== 'running');
+
+    const inspectDetails = await Promise.all(
+      notRunningContainers.map(async (container) => {
+        try {
+          const detailRes = await fetch(`/api/v1/docker/containers/${container.Id}/json`, {
+            headers: authHeaders,
+          });
+
+          if (!detailRes.ok) return null;
+          return detailRes.json();
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    const portsFromInspect = inspectDetails.filter(Boolean).flatMap((container) => {
+      const bindings = container?.HostConfig?.PortBindings || {};
+
+      return Object.entries(bindings).flatMap(([binding, values]) => {
+        if (!Array.isArray(values)) return [];
+
+        const proto = String(binding).split('/')[1] || '';
+
+        return values
+          .map((value) => {
+            const hostPort = value?.HostPort;
+            if (hostPort == null || hostPort === '') return null;
+
+            const port = Number(hostPort);
+            if (!Number.isFinite(port)) return null;
+
+            return {
+              port,
+              proto,
+              name: (container?.Name || '').replace(/^\//, ''),
+              status: container?.State?.Status || '',
+            };
+          })
+          .filter(Boolean);
+      });
+    });
+
+    const mergedPorts = [...portsFromSummary, ...portsFromInspect];
+    const dedupedPorts = new Map();
+
+    mergedPorts.forEach((entry) => {
+      const key = `${entry.name}|${entry.port}|${entry.proto}`;
+      if (!dedupedPorts.has(key)) {
+        dedupedPorts.set(key, entry);
+      }
+    });
+
+    usedDockerPorts.value = Array.from(dedupedPorts.values()).sort((a, b) => {
+      if (a.port !== b.port) return a.port - b.port;
+      return a.proto.localeCompare(b.proto);
+    });
   } catch (e) {
     containerOptions.value = [];
+    usedDockerPorts.value = [];
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
@@ -1083,5 +1156,15 @@ const getGPUs = async () => {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   }
+};
+
+const dockerStateColor = (status) => {
+  const state = String(status || '').toLowerCase();
+  if (state === 'running') return 'success';
+  if (state === 'paused') return 'warning';
+  if (state === 'restarting') return 'warning';
+  if (state === 'exited') return 'error';
+  if (state === 'dead') return 'error';
+  return 'grey';
 };
 </script>
