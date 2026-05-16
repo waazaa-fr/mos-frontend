@@ -96,10 +96,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     chunkSizeWarningLimit: 1000,
-    rolldownOptions: {
+    rollupOptions: {
       input: ['./reboot.html', './index.html', './shutdown.html'],
       output: {
-        codeSplitting: true,
         manualChunks(id) {
           if (id.includes('node_modules/vuetify')) return 'vendor-vuetify';
           if (
