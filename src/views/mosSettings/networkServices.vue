@@ -57,7 +57,18 @@
                 <v-switch :label="$t('tailscale update check')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.tailscale.update_check"></v-switch>
               </v-col>
             </v-row>
-            <v-text-field class="mt-2" :label="$t('tailscale params')" v-model="settingsNetwork.tailscale.tailscaled_params" hide-details="auto"></v-text-field>
+            <v-text-field class="mt-2" :label="$t('tailscale params')" v-model="settingsNetwork.tailscale.tailscaled_params"></v-text-field>
+            <v-btn
+              v-if="apiSettingsNetwork && apiSettingsNetwork.tailscale.enabled"
+              variant="text"
+              size="small"
+              class="ma-1 pa-0"
+              style="min-width: 0; color: green"
+              @click="openWebTerminal('loginTailscale')"
+            >
+              <v-icon size="18" class="mr-1">mdi-lock-outline</v-icon>
+              {{ $t('tailscale login') }}
+            </v-btn>
             <v-divider class="my-4"></v-divider>
             <span class="text-title-medium font-weight-medium">{{ $t('netbird') }}</span>
             <v-chip size="small" v-if="settingsNetwork.netbird.online" color="green">{{ $t('online') }}</v-chip>
@@ -70,6 +81,17 @@
               </v-col>
             </v-row>
             <v-text-field class="mt-2" :label="$t('netbird service params')" v-model="settingsNetwork.netbird.netbird_service_params"></v-text-field>
+            <v-btn
+              v-if="apiSettingsNetwork && apiSettingsNetwork.netbird.enabled"
+              variant="text"
+              size="small"
+              class="ma-1 pa-0"
+              style="min-width: 0; color: green"
+              @click="openWebTerminal('loginNetbird')"
+            >
+              <v-icon size="18" class="mr-1">mdi-lock-outline</v-icon>
+              {{ $t('netbird login') }}
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-container>
@@ -90,6 +112,7 @@
 import { onMounted, ref, computed } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
+import { openTerminalPopup } from '@/composables/terminalpopup';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const settingsNetwork = ref({
@@ -128,6 +151,7 @@ const settingsNetwork = ref({
     enabled: false,
   },
 });
+const apiSettingsNetwork = ref(null);
 const overlay = ref(false);
 const { t } = useI18n();
 
@@ -149,6 +173,7 @@ const getNetworkSettings = async () => {
     }
 
     settingsNetwork.value = await res.json();
+    apiSettingsNetwork.value = JSON.parse(JSON.stringify(settingsNetwork.value));
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -174,11 +199,61 @@ const setNetworkSettings = async () => {
 
     showSnackbarSuccess(t('network settings changed successfully'));
     emit('refresh-drawer');
+    getNetworkSettings();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
+  }
+};
+
+const openWebTerminal = async (service) => {
+  const sessionId = await createTerminalSession(service);
+  if (sessionId) {
+    openTerminalPopup(sessionId);
+  } else {
+    showSnackbarError(t('failed to create terminal session'));
+  }
+};
+
+const createTerminalSession = async (service) => {
+  let payload;
+  if (service === 'loginTailscale') {
+    payload = {
+      command: 'tailscale',
+      args: ['up'],
+      width: 900,
+      height: 420,
+    };
+  } else if (service === 'loginNetbird') {
+    payload = {
+      command: 'netbird',
+      args: ['up'],
+      width: 900,
+      height: 420,
+    };
+  }
+
+  try {
+    const res = await fetch('/api/v1/terminal/create', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('failed to create terminal session')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    const Result = await res.json();
+    return Result.sessionId;
+  } catch (e) {
+    showSnackbarError(e.message);
   }
 };
 </script>

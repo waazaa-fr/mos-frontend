@@ -1510,5 +1510,7 @@
   "show used ports": "Verwendete Ports anzeigen",
   "restarting": "wird neu gestartet",
   "exited": "beendet",
-  "dead": "tot"
+  "dead": "tot",
+  "netbird login": "Netbird Login",
+  "tailscale login": "Tailscale Login"
 }

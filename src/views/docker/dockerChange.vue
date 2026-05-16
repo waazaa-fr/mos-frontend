@@ -994,5 +994,4 @@ const dockerStateColor = (status) => {
   if (state === 'dead') return 'error';
   return 'grey';
 };
-
 </script>
