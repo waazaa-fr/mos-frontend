@@ -1512,5 +1512,10 @@
   "exited": "exited",
   "dead": "dead",
   "netbird login": "Netbird Login",
-  "tailscale login": "Tailscale Login"  
+  "netbird logout": "Netbird Logout",
+  "tailscale login": "Tailscale Login",
+  "tailscale logout": "Tailscale Logout",
+  "unknown service": "Unknown service",
+  "confirm logout": "Confirm Logout",
+  "are you sure you want to logout": "Are you sure you want to logout"
 }

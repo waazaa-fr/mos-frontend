@@ -69,6 +69,21 @@
               <v-icon size="18" class="mr-1">mdi-lock-outline</v-icon>
               {{ $t('tailscale login') }}
             </v-btn>
+            <v-btn
+              logout
+              v-if="apiSettingsNetwork && apiSettingsNetwork.tailscale.enabled && settingsNetwork.tailscale.online"
+              variant="text"
+              size="small"
+              class="ma-1 pa-0"
+              style="min-width: 0; color: green"
+              @click="
+                confirmLogout.value = true;
+                confirmLogout.service = 'Tailscale';
+              "
+            >
+              <v-icon size="18" class="mr-1">mdi-lock-outline</v-icon>
+              {{ $t('tailscale logout') }}
+            </v-btn>
             <v-divider class="my-4"></v-divider>
             <span class="text-title-medium font-weight-medium">{{ $t('netbird') }}</span>
             <v-chip size="small" v-if="settingsNetwork.netbird.online" color="green">{{ $t('online') }}</v-chip>
@@ -92,11 +107,57 @@
               <v-icon size="18" class="mr-1">mdi-lock-outline</v-icon>
               {{ $t('netbird login') }}
             </v-btn>
+            <v-btn
+              logout
+              v-if="apiSettingsNetwork && apiSettingsNetwork.netbird.enabled && settingsNetwork.netbird.online"
+              variant="text"
+              size="small"
+              class="ma-1 pa-0"
+              style="min-width: 0; color: green"
+              @click="
+                confirmLogout.value = true;
+                confirmLogout.service = 'Netbird';
+              "
+            >
+              <v-icon size="18" class="mr-1">mdi-lock-outline</v-icon>
+              {{ $t('netbird logout') }}
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-container>
     </v-container>
   </v-container>
+
+  <!-- Confirm Logout Dialog -->
+  <v-dialog v-model="confirmLogout.value" max-width="500">
+    <v-card :title="confirmLogout.service + ' - ' + $t('confirm logout')" prepend-icon="mdi-lock-outline">
+      <v-card-text>{{ $t('are you sure you want to logout') }}?</v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          text
+          color="onPrimary"
+          @click="
+            confirmLogout.value = false;
+            confirmLogout.service = '';
+          "
+        >
+          {{ $t('cancel') }}
+        </v-btn>
+        <v-btn
+          text
+          color="onPrimary"
+          @click="
+            confirmLogout.value = false;
+            openWebTerminal('logout' + confirmLogout.service);
+            confirmLogout.service = '';
+          "
+        >
+          {{ $t('logout') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
   <!-- Floating Action Button -->
   <v-fab @click="setNetworkSettings()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
@@ -109,7 +170,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { openTerminalPopup } from '@/composables/terminalpopup';
@@ -150,6 +211,10 @@ const settingsNetwork = ref({
   dnsmasq: {
     enabled: false,
   },
+});
+const confirmLogout = reactive({
+  value: false,
+  service: '',
 });
 const apiSettingsNetwork = ref(null);
 const overlay = ref(false);
@@ -233,6 +298,23 @@ const createTerminalSession = async (service) => {
       width: 900,
       height: 420,
     };
+  } else if (service === 'logoutTailscale') {
+    payload = {
+      command: 'tailscale',
+      args: ['logout'],
+      width: 900,
+      height: 420,
+    };
+  } else if (service === 'logoutNetbird') {
+    payload = {
+      command: 'netbird',
+      args: ['down'],
+      width: 900,
+      height: 420,
+    };
+  } else {
+    showSnackbarError(t('unknown service'));
+    return null;
   }
 
   try {
@@ -250,10 +332,11 @@ const createTerminalSession = async (service) => {
       throw new Error(`${t('failed to create terminal session')}|$| ${error.error || t('unknown error')}`);
     }
 
-    const Result = await res.json();
-    return Result.sessionId;
+    const result = await res.json();
+    return result.sessionId;
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 </script>
