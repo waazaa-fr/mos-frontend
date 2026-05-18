@@ -59,7 +59,7 @@
             </v-row>
             <v-text-field class="mt-2" :label="$t('tailscale params')" v-model="settingsNetwork.tailscale.tailscaled_params"></v-text-field>
             <v-btn
-              v-if="apiSettingsNetwork && apiSettingsNetwork.tailscale.enabled"
+              v-if="apiSettingsNetwork && apiSettingsNetwork.tailscale.enabled && !settingsNetwork.tailscale.online"
               variant="text"
               size="small"
               class="ma-1 pa-0"
@@ -82,7 +82,7 @@
             </v-row>
             <v-text-field class="mt-2" :label="$t('netbird service params')" v-model="settingsNetwork.netbird.netbird_service_params"></v-text-field>
             <v-btn
-              v-if="apiSettingsNetwork && apiSettingsNetwork.netbird.enabled"
+              v-if="apiSettingsNetwork && apiSettingsNetwork.netbird.enabled && !settingsNetwork.netbird.online"
               variant="text"
               size="small"
               class="ma-1 pa-0"
