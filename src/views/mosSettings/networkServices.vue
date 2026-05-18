@@ -300,15 +300,15 @@ const createTerminalSession = async (service) => {
     };
   } else if (service === 'logoutTailscale') {
     payload = {
-      command: 'tailscale',
-      args: ['logout'],
+      command: 'sh',
+      args: ['-c', 'tailscale logout && tailscale status'],
       width: 900,
       height: 420,
     };
   } else if (service === 'logoutNetbird') {
     payload = {
-      command: 'netbird',
-      args: ['deregister'],
+      command: 'sh',
+      args: ['-c', 'netbird logout && netbird status'],
       width: 900,
       height: 420,
     };
