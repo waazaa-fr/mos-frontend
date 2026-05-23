@@ -17,7 +17,7 @@
             {{ $t('no occupied ports found') }}
           </v-alert>
 
-          <div v-else style="overflow: auto; max-height: calc(100vh - 150px)">
+          <div v-else style="overflow: auto; max-height: calc(100vh - 150px); margin-bottom: 16px">
             <v-table density="compact" class="bg-transparent">
               <thead>
                 <tr style="background-color: rgba(0, 0, 0, 0.04)">
