@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="d-flex justify-center">
-    <v-navigation-drawer v-model="sidePanel.open" location="right" temporary width="400" :scrim="false" scrollable>
+    <v-navigation-drawer v-model="sidePanel.open" location="right" temporary width="400" :scrim="false">
       <template #prepend>
         <v-toolbar density="compact" class="bg-transparent">
           <v-btn icon size="small" @click="sidePanel.open = false" class="ml-auto">
@@ -17,7 +17,7 @@
             {{ $t('no occupied ports found') }}
           </v-alert>
 
-          <div v-else style="overflow-x: auto">
+          <div v-else style="overflow: auto; max-height: 400px">
             <v-table density="compact" class="bg-transparent">
               <thead>
                 <tr style="background-color: rgba(0, 0, 0, 0.04)">
