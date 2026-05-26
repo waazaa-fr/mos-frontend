@@ -47,7 +47,7 @@
         <div v-if="cpu.cores && cpu.cores.length">
           <details :open="coresExpanded" @toggle="onCoresToggle">
             <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('cores') }}</summary>
-            <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" density="compact">
+            <v-row v-for="core in (cpu.cores || []).filter((c) => c.isPhysical)" :key="core.number" density="compact">
               <v-col>
                 <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
                   <div class="core-label text-body-2">
@@ -71,7 +71,7 @@
                   </div>
                 </div>
               </v-col>
-              <v-col v-for="(thread, ti) in (cpu.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti" density="compact">
+              <v-col v-for="thread in (cpu.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="thread.number" density="compact">
                 <div class="core-row" style="min-width: 0">
                   <div class="core-label text-body-2">
                     <small>
@@ -155,5 +155,10 @@ const onCoresToggle = (e) => {
   display: flex;
   align-items: center;
   height: 12px;
+}
+
+.core-bar :deep(.v-progress-linear__determinate),
+.core-bar :deep(.v-progress-linear__stream) {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 </style>
