@@ -1555,5 +1555,6 @@
   "iscsi config could not be saved": "iSCSI-Konfiguration konnte nicht gespeichert werden",
   "iscsi config could not be loaded": "iSCSI-Konfiguration konnte nicht geladen werden",
   "targets": "Ziele",
-  "delete target": "Ziel löschen"
+  "delete target": "Ziel löschen",
+  "allow execute always": "Ausführen immer erlauben"
 }

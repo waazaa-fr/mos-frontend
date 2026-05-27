@@ -429,7 +429,7 @@
               ? unassignedDisks
                   .filter((disk) => createPoolDialog.type !== 'mergerfs' || !createPoolDialog.snapraidDevice.includes(disk.device))
                   .map((disk) => ({
-                    title: `${disk.device} (${disk.size_human})`,
+                    title: `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`,
                     value: disk.device,
                   }))
               : []
@@ -448,7 +448,7 @@
               ? unassignedDisks
                   .filter((disk) => !createPoolDialog.devices.includes(disk.device))
                   .map((disk) => ({
-                    title: `${disk.device} (${disk.size_human})`,
+                    title: `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`,
                     value: disk.device,
                   }))
               : []
@@ -465,7 +465,7 @@
           :items="
             Array.isArray(unassignedDisks)
               ? unassignedDisks.map((disk) => ({
-                  title: `${disk.device} (${disk.size_human})`,
+                  title: `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`,
                   value: disk.device,
                 }))
               : []
@@ -533,7 +533,7 @@
         <v-form>
           <v-select
             v-model="addMergerfsDevicesDialog.devices"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`) : []"
             :label="$t('devices')"
             :multiple="true"
             density="comfortable"
@@ -560,7 +560,7 @@
         <v-form>
           <v-select
             v-model="removeMergerfsDevicesDialog.devices"
-            :items="removeMergerfsDevicesDialog.pool ? removeMergerfsDevicesDialog.pool.data_devices.map((device) => device.device) : []"
+            :items="removeMergerfsDevicesDialog.pool ? removeMergerfsDevicesDialog.pool.data_devices.map((device) => `${device.device} (${device.size_human}) (${device.serial ? device.serial : '—'})`) : []"
             :label="$t('devices')"
             :multiple="true"
             density="comfortable"
@@ -584,13 +584,13 @@
       <v-card-text style="overflow: auto" class="pt-2">
         <v-select
           v-model="replaceMergerfsDeviceDialog.oldDevice"
-          :items="replaceMergerfsDeviceDialog.pool ? replaceMergerfsDeviceDialog.pool.data_devices.map((device) => device.device) : []"
+          :items="replaceMergerfsDeviceDialog.pool ? replaceMergerfsDeviceDialog.pool.data_devices.map((device) => `${device.device} (${device.size_human}) (${device.serial ? device.serial : '—'})`) : []"
           :label="$t('old device')"
           density="comfortable"
         />
         <v-select
           v-model="replaceMergerfsDeviceDialog.newDevice"
-          :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+          :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`) : []"
           :label="$t('new device')"
           density="comfortable"
         />
@@ -617,7 +617,7 @@
         <v-form>
           <v-select
             v-model="addParityDevicesDialog.devices"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`) : []"
             :label="$t('devices')"
             :multiple="true"
             density="comfortable"
@@ -643,7 +643,7 @@
         <v-form>
           <v-select
             v-model="removeParityDevicesDialog.devices"
-            :items="removeParityDevicesDialog.pool ? removeParityDevicesDialog.pool.parity_devices.map((device) => device.device) : []"
+            :items="removeParityDevicesDialog.pool ? removeParityDevicesDialog.pool.parity_devices.map((device) => `${device.device} (${device.size_human}) (${device.serial ? device.serial : '—'})`) : []"
             :label="$t('devices')"
             :multiple="true"
             density="comfortable"
@@ -668,13 +668,13 @@
         <v-form>
           <v-select
             v-model="replaceParityDeviceDialog.oldDevice"
-            :items="replaceParityDeviceDialog.pool ? replaceParityDeviceDialog.pool.parity_devices.map((device) => device.device) : []"
+            :items="replaceParityDeviceDialog.pool ? replaceParityDeviceDialog.pool.parity_devices.map((device) => `${device.device} (${device.size_human}) (${device.serial ? device.serial : '—'})`) : []"
             :label="$t('old device')"
             density="comfortable"
           />
           <v-select
             v-model="replaceParityDeviceDialog.newDevice"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`) : []"
             :label="$t('new device')"
             density="comfortable"
           />
@@ -847,7 +847,7 @@
       <v-card-text style="overflow: auto">
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-form>
-          <v-select v-model="addNonRaidParityDialog.device" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('device')" density="comfortable" />
+          <v-select v-model="addNonRaidParityDialog.device" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => `${disk.device} (${disk.size_human}) (${disk.serial ? disk.serial : '—'})`) : []" :label="$t('device')" density="comfortable" />
         </v-form>
       </v-card-text>
       <v-divider />

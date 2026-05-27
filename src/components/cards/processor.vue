@@ -157,8 +157,8 @@ const onCoresToggle = (e) => {
   height: 12px;
 }
 
-.core-bar :deep(.v-progress-linear__determinate),
-.core-bar :deep(.v-progress-linear__stream) {
+:deep(.v-progress-linear__determinate),
+:deep(.v-progress-linear__stream) {
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 </style>
