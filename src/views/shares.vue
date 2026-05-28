@@ -938,6 +938,7 @@ const openEditSmbDialog = (share) => {
   editSmbDialog.preserve_case = share.preserve_case || true;
   editSmbDialog.case_sensitive = share.case_sensitive || true;
   editSmbDialog.comment = share.comment || '';
+  editSmbDialog.allow_execute_always = share.allow_execute_always || false;
 };
 const openEditNfsDialog = (share) => {
   editNfsDialog.value = true;
@@ -982,6 +983,7 @@ const clearCreateSmbDialog = () => {
   createSmbDialog.case_sensitive = true;
   createSmbDialog.policies = [];
   createSmbDialog.createDirectory = true;
+  createSmbDialog.allow_execute_always = false;
 };
 const clearEditSmbDialog = () => {
   editSmbDialog.value = false;
@@ -993,6 +995,7 @@ const clearEditSmbDialog = () => {
   editSmbDialog.read_only = false;
   editSmbDialog.write_list = [];
   editSmbDialog.valid_users = [];
+  editSmbDialog.allow_execute_always = false;
 };
 const clearEditNfsDialog = () => {
   editNfsDialog.value = false;
