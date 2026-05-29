@@ -1557,5 +1557,10 @@
   "targets": "Targets",
   "delete target": "Delete Target",
   "allow execute always": "Allow execute always",
-  "skip size check": "Skip size check"
+  "skip size check": "Skip size check",
+  "huge pages": "Huge Pages",
+  "set huge pages": "Set Huge Pages",
+  "system huge page size": "System Huge Page Size",
+  "free huge pages": "Free Huge Pages",
+  "used huge pages": "Used Huge Pages"
 }

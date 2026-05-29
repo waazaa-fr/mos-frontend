@@ -1557,5 +1557,10 @@
   "targets": "Ziele",
   "delete target": "Ziel löschen",
   "allow execute always": "Ausführen immer erlauben",
-  "skip size check": "Größenprüfung überspringen"
+  "skip size check": "Größenprüfung überspringen",
+  "huge pages": "Huge Pages",
+  "set huge pages": "Gesetzte Huge Pages",
+  "system huge page size": "System Huge Page Größe",
+  "free huge pages": "Freie Huge Pages",
+  "used huge pages": "Verwendete Huge Pages"
 }
