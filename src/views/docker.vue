@@ -76,7 +76,7 @@
                         </template>
 
                         <v-list v-if="group.compose">
-                          <v-list-item v-if="group.webui && group.running" @click="showComposeWebui(group)">
+                          <v-list-item v-if="group.webui && group.runningCount > 0" @click="showComposeWebui(group)">
                             <template #prepend>
                               <v-icon>mdi-web</v-icon>
                             </template>
@@ -1134,11 +1134,16 @@ const getDockerGroups = async () => {
       const old = dockerGroups.value.find((g) => g.id === group.id);
       // Für Compose-Gruppen: webui und autostart aus composeStacks übernehmen
       const composeStack = group.compose ? composeStacks.value.find((s) => s.name === group.name) : null;
+      const runningCount = (group.containers || []).filter((name) => {
+        const d = dockers.value.find((d) => d.Names && d.Names[0] === name);
+        return d && d.State === 'running';
+      }).length;
       return {
         ...group,
         expanded: old ? old.expanded : false,
-        webui: composeStack?.webui || null,
+        webui: composeStack?.webui || group.webui || null,
         autostart: composeStack?.autostart ?? false,
+        runningCount,
       };
     });
   } catch (e) {
@@ -1985,27 +1990,22 @@ const showWebui = (docker) => {
 const showComposeWebui = (group) => {
   if (!group.webui) return;
   let webui = group.webui;
-  const portMatch = webui.match(/PORT:(\d+)/);
+  const portMatch = webui.match(/\[?PORT:(\d+)\]?/i);
   if (portMatch) {
+    let resolvedPort = portMatch[1];
     for (const containerName of group.containers || []) {
       const container = dockers.value.find((d) => d.Names && d.Names[0] === containerName);
       if (container && Array.isArray(container.Ports)) {
         const portObj = container.Ports.find((port) => port.PrivatePort === Number(portMatch[1]));
         if (portObj) {
-          const port = portObj.PublicPort ? portObj.PublicPort : portObj.PrivatePort;
-          webui = webui.replace(/\[PORT:\d+\]/g, port);
+          resolvedPort = portObj.PublicPort ? portObj.PublicPort : portObj.PrivatePort;
           break;
         }
       }
     }
-    if (webui.includes('[PORT:')) {
-      webui = webui.replace(/\[PORT:\d+\]/g, portMatch[1]);
-    }
+    webui = webui.replace(/\[?PORT:\d+\]?/gi, resolvedPort);
   }
-  const addressMatch = webui.match(/\[ADDRESS\]/g);
-  if (addressMatch) {
-    webui = webui.replace(/\[ADDRESS\]/g, window.location.hostname);
-  }
+  webui = webui.replace(/\[ADDRESS\]/gi, window.location.hostname);
   window.open(webui, '_blank');
 };
 
