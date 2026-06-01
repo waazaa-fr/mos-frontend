@@ -46,6 +46,25 @@
                       <v-icon v-bind="props" style="cursor: pointer">mdi-connection</v-icon>
                     </template>
                     <v-list>
+                      <v-list-item @click="loginTarget(target.id)">
+                        <template #prepend>
+                          <v-icon>mdi-login</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('login') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="logoutTarget(target.id)">
+                        <template #prepend>
+                          <v-icon>mdi-logout</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('logout') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="testConnection(target.portal.address, target.portal.port, true)">
+                        <template #prepend>
+                          <v-icon>mdi-lan-connect</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('test connection') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-divider />
                       <v-list-item @click="openEditDialog(i)">
                         <template #prepend>
                           <v-icon>mdi-text-box-edit</v-icon>
@@ -186,8 +205,9 @@ onMounted(() => {
   getInitiators();
 });
 
-const testConnection = async (targetIp, targetPort) => {
+const testConnection = async (targetIp, targetPort, withOverlay = false) => {
   testingConnection.value = true;
+  if (withOverlay) overlay.value = true;
   try {
     const res = await fetch('/api/v1/iscsi/initiator/test-connection', {
       method: 'POST',
@@ -206,6 +226,7 @@ const testConnection = async (targetIp, targetPort) => {
     showSnackbarError(t('connection failed'), e.message);
   } finally {
     testingConnection.value = false;
+    overlay.value = false;
   }
 };
 
@@ -357,6 +378,52 @@ const confirmDelete = async () => {
     } finally {
       overlay.value = false;
     }
+  }
+};
+
+const loginTarget = async (targetId) => {
+  overlay.value = true;
+  try {
+    const res = await fetch(`/api/v1/iscsi/initiator/targets/${targetId}/login`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || t('unknown error'));
+    }
+    showSnackbarSuccess(data.message || t('login'));
+    getInitiators();
+  } catch (e) {
+    showSnackbarError(t('login failed'), e.message);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const logoutTarget = async (targetId) => {
+  overlay.value = true;
+  try {
+    const res = await fetch(`/api/v1/iscsi/initiator/targets/${targetId}/logout`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || t('unknown error'));
+    }
+    showSnackbarSuccess(data.message || t('logout'));
+    getInitiators();
+  } catch (e) {
+    showSnackbarError(t('logout'), e.message);
+  } finally {
+    overlay.value = false;
   }
 };
 
