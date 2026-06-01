@@ -512,7 +512,7 @@
   "mount point is required": "Mount point is required",
   "remote mount could not be deleted": "Remote mount could not be deleted",
   "remote mount deleted successfully": "Remote mount deleted successfully",
-  "are you sure you want to delete this remote mount?": "Are you sure you want to delete this remote mount?",
+  "are you sure you want to delete this remote mount": "Are you sure you want to delete this remote mount",
   "ip": "IP",
   "domain": "Domain",
   "gid": "GID",

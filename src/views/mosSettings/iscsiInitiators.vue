@@ -24,15 +24,10 @@
             ></v-text-field>
             <v-btn color="primary" variant="tonal" :disabled="!initiatorName" @click="saveInitiator()">{{ $t('save') }}</v-btn>
           </div>
-        </v-card>
 
-        <!-- Targets -->
-        <v-card v-if="initiatorTargets.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0">
-          <v-card-text class="pa-4">
-            {{ $t('no targets configured') }}
-          </v-card-text>
-        </v-card>
-        <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
+          <v-divider class="my-4" />
+
+          <!-- Targets -->
           <v-table density="comfortable" style="overflow-x: auto">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
@@ -99,7 +94,16 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
-        <v-btn variant="text" color="blue" prepend-icon="mdi-lan-connect" :disabled="!createDialog.portal.address" :loading="testingConnection" @click="testConnection(createDialog.portal.address, createDialog.portal.port)">{{ $t('test connection') }}</v-btn>
+        <v-btn
+          variant="text"
+          color="blue"
+          prepend-icon="mdi-lan-connect"
+          :disabled="!createDialog.portal.address"
+          :loading="testingConnection"
+          @click="testConnection(createDialog.portal.address, createDialog.portal.port)"
+        >
+          {{ $t('test connection') }}
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="onPrimary" @click="createDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" :disabled="!createDialog.name || !createDialog.portal.address" @click="createInitiatorTarget()">{{ $t('add') }}</v-btn>
@@ -124,7 +128,16 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
-        <v-btn variant="text" color="blue" prepend-icon="mdi-lan-connect" :disabled="!editDialog.portal.address" :loading="testingConnection" @click="testConnection(editDialog.portal.address, editDialog.portal.port)">{{ $t('test connection') }}</v-btn>
+        <v-btn
+          variant="text"
+          color="blue"
+          prepend-icon="mdi-lan-connect"
+          :disabled="!editDialog.portal.address"
+          :loading="testingConnection"
+          @click="testConnection(editDialog.portal.address, editDialog.portal.port)"
+        >
+          {{ $t('test connection') }}
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="onPrimary" @click="editDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" :disabled="!editDialog.name || !editDialog.portal.address" @click="updateInitiatorTarget()">{{ $t('save') }}</v-btn>
@@ -335,7 +348,7 @@ const confirmDelete = async () => {
       }
       getInitiators();
       showSnackbarSuccess(t('iscsi initiator deleted successfully'));
-  deleteDialog.value = false;
+      deleteDialog.value = false;
     } catch (e) {
       showSnackbarError(t('iscsi initiator could not be deleted'), e.message);
       overlay.value = false;
@@ -372,5 +385,4 @@ const getInitiators = async () => {
     overlay.value = false;
   }
 };
-
 </script>
