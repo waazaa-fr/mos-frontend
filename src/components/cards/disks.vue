@@ -77,7 +77,7 @@
         </v-row>
 
         <v-row v-for="(parity_device, devIdx) in pool.parity_devices ?? []" :key="`parity-${devIdx}`" class="py-0 mt-0" style="flex-wrap: nowrap; overflow: hidden">
-          <v-col cols="4" sm="4" class="d-flex align-center py-0" style="gap: 3px; min-width: 0; overflow: hidden; line-height: 1.1">
+          <v-col cols="6" sm="6" class="d-flex align-center py-0" style="gap: 3px; min-width: 0; overflow: hidden; line-height: 1.1">
             <span
               :style="{
                 display: 'inline-block',
