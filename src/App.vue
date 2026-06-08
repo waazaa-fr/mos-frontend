@@ -120,10 +120,10 @@
           <v-divider />
           <div class="pa-2 pb-3">
             <div v-if="mosVersion" class="d-flex align-center justify-center ga-1 pt-2 text-caption text-disabled">{{ $t('mos') }}: {{ mosVersion }}</div>
-            <v-divider v-if="mosServices?.mos?.supporter" class="mt-3" />
-            <div v-if="mosServices?.mos?.supporter" class="d-flex align-center justify-center pt-2">
+            <v-divider v-if="!mosServices?.mos?.supporter" class="mt-3" />
+            <div v-if="!mosServices?.mos?.supporter" class="d-flex align-center justify-center pt-2">
               <div class="supporter-badge">
-                <v-img src="/mos_black.png" alt="MOS" width="24" height="24" contain class="supporter-badge__logo" />
+                <v-img src="/mos_black.png" alt="MOS" width="32" height="32" contain class="supporter-badge__logo" />
                 <span class="supporter-badge__label">{{ $t('supporter') }}</span>
               </div>
             </div>
@@ -659,6 +659,7 @@ function cleanupWS(clearTimer = true) {
 
 .supporter-badge__logo {
   flex: 0 0 auto;
+  margin: -8px 0;
 }
 
 .supporter-badge__label {
