@@ -1586,5 +1586,13 @@
   "restore from file": "Restore from file",
   "tar file": "Tar file",
   "select file": "Select file",
-  "supporter": "Supporter"
+  "supporter": "Supporter",
+  "support mos": "Support MOS",
+  "mos is and will be free for everyone": "MOS is and will be free for everyone",
+  "if you would like to support the project, please consider to send a donation": "If you would like to support the project, please consider to send a donation",
+  "as a thank you, every supporter who donates at least $5 will receive a code to unlock a support banner": "As a thank you, every supporter who donates at least $5 will receive a code to unlock a support banner",
+  "enter code": "Enter code",
+  "hide code entry": "Hide code entry",
+  "support banner successfully activated": "Support Banner successfully activated",
+  "invalid support code": "Invalid support code"
 }

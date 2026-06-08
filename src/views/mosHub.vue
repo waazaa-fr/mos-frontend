@@ -163,7 +163,7 @@
                         style="top: 12px; left: 12px; background: var(--v-theme-secondary); color: var(--v-theme-on-secondary)"
                         :href="tpl.maintainer_donate"
                         target="_blank"
-                        prepend-icon="mdi-github"
+                        prepend-icon="mdi-account"
                       >
                         {{ tpl.maintainer || $t('unknown') }}
                       </v-chip>

@@ -1586,5 +1586,13 @@
   "restore from file": "Von Datei wiederherstellen",
   "tar file": "Tar Datei",
   "select file": "Datei auswählen",
-  "supporter": "Unterstützer"
+  "supporter": "Unterstützer",
+  "support mos": "Unterstütze MOS",
+  "mos is and will be free for everyone": "MOS ist und wird immer für alle kostenlos sein",
+  "if you would like to support the project, please consider to send a donation": "Wenn du das Projekt unterstützen möchtest, freuen wir uns über eine Spende",
+  "as a thank you, every supporter who donates at least $5 will receive a code to unlock a support banner": "Als Dankeschön erhält jeder Unterstützer, der mindestens $5 spendet, einen Code, mit dem er ein Support Banner freischalten kann",
+  "enter code": "Code eingeben",
+  "hide code entry": "Code eingeben ausblenden",
+  "support banner successfully activated": "Support Banner erfolgreich aktiviert",
+  "invalid support code": "Ungültiger Support Code"
 }
