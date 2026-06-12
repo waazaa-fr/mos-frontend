@@ -655,10 +655,6 @@ function cleanupWS(clearTimer = true) {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.supporter-badge:hover {
-  transform: translateY(-1px);
-}
-
 .supporter-badge__logo {
   flex: 0 0 auto;
   margin: -8px 0;
