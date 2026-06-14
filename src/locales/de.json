@@ -1603,5 +1603,11 @@
   "alerts": "Alarme",
   "alert": "Alarm",
   "usage alert settings could not be saved": "Einstellungen für Nutzungswarnungen konnten nicht gespeichert werden",
-  "usage alert settings saved successfully": "Einstellungen für Nutzungswarnungen erfolgreich gespeichert"
+  "usage alert settings saved successfully": "Einstellungen für Nutzungswarnungen erfolgreich gespeichert",
+  "sleep all": "Ruhezustand Alle",
+  "wake all": "Aufwecken Alle",
+  "disks could not be put to sleep": "Festplatten konnten nicht in den Ruhezustand versetzt werden",
+  "disks successfully put to sleep": "Festplatten erfolgreich in den Ruhezustand versetzt",
+  "disks could not be woken up": "Festplatten konnten nicht aufgeweckt werden",
+  "disks successfully woken up": "Festplatten erfolgreich aufgeweckt"
 }

@@ -1603,5 +1603,11 @@
   "alerts": "Alerts",
   "alert": "Alert",
   "usage alert settings could not be saved": "Usage alert settings could not be saved",
-  "usage alert settings saved successfully": "Usage alert settings saved successfully"  
+  "usage alert settings saved successfully": "Usage alert settings saved successfully",
+  "sleep all": "Sleep All",
+  "wake all": "Wake All",
+  "disks could not be put to sleep": "Disks could not be put to sleep",
+  "disks successfully put to sleep": "Disks successfully put to sleep",
+  "disks could not be woken up": "Disks could not be woken up",
+  "disks successfully woken up": "Disks successfully woken up"
 }
