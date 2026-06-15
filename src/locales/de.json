@@ -909,7 +909,7 @@
   "mounts": "Mounts",
   "stats": "Statistiken",
   "used software and packages": "Verwendete Software und Pakete",
-  "special thanks to the whole mos team": "Besonderer Dank an das gesamte MOS Team",  
+  "special thanks to the whole mos team": "Besonderer Dank an das gesamte MOS Team",
   "the mos team": "Das MOS Team",
   "thanks you for your use and feedback": "bedankt sich bei dir für die Nutzung und dein Feedback",
   "official channels": "Offizielle Kanäle",
@@ -1610,5 +1610,12 @@
   "disks successfully put to sleep": "Festplatten erfolgreich in den Ruhezustand versetzt",
   "disks could not be woken up": "Festplatten konnten nicht aufgeweckt werden",
   "disks successfully woken up": "Festplatten erfolgreich aufgeweckt",
-  "boot backup files could not be loaded": "Boot Backup Dateien konnten nicht geladen werden"
+  "boot backup files could not be loaded": "Boot Backup Dateien konnten nicht geladen werden",
+  "btrfs schedules": "Btrfs Zeitpläne",
+  "nonraid check schedule (cron)": "NonRaid-Prüfzeitplan (cron)",
+  "passphrase is required": "Passphrase ist erforderlich",
+  "scrub enabled": "Scrub aktiviert",
+  "balance enabled": "Balance aktiviert",
+  "schedules saved successfully": "Zeitpläne erfolgreich gespeichert",
+  "balance schedule (cron)": "Balance-Zeitplan (cron)"
 }
