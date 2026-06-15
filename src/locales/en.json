@@ -1583,7 +1583,7 @@
   "are you sure you want to delete this initiator": "Are you sure you want to delete this initiator",
   "iscsi target could not be loaded": "iSCSI targets could not be loaded",
   "channel is being switched from": "Channel is being switched from",
-  "restore from file": "Restore from file",
+  "restore from file (mos backup)": "Restore from file (MOS Backup)",
   "tar file": "Tar file",
   "select file": "Select file",
   "supporter": "Supporter",
@@ -1609,5 +1609,6 @@
   "disks could not be put to sleep": "Disks could not be put to sleep",
   "disks successfully put to sleep": "Disks successfully put to sleep",
   "disks could not be woken up": "Disks could not be woken up",
-  "disks successfully woken up": "Disks successfully woken up"
+  "disks successfully woken up": "Disks successfully woken up",
+  "boot backup files could not be loaded": "Boot backup files could not be loaded"
 }

@@ -19,7 +19,7 @@
             <p class="text-body-2 text-medium-emphasis mt-1 mb-3">{{ $t('transfer usb data to disk device') }}</p>
             <v-row no-gutters>
               <v-col cols="12" md="4" lg="3">
-                <v-btn color="primary" rounded size="large" block prepend-icon="mdi-harddisk-plus" @click="installToDiskDialog.value = true">
+                <v-btn color="primary" rounded size="large" block prepend-icon="mdi-harddisk-plus" @click="openInstallToDiskDialog()">
                   {{ $t('install to disk') }}
                 </v-btn>
               </v-col>
@@ -64,23 +64,19 @@
           :label="$t('device')"
           density="comfortable"
         />
-        <v-select v-model="installToDiskDialog.filesystem" :items="['ext4', 'btrfs', 'xfs', 'vfat']" :label="$t('filesystem')" required outlined></v-select>
+        <v-select v-model="installToDiskDialog.filesystem" :items="['ext4', 'btrfs', 'xfs', 'vfat']" :label="$t('filesystem')" required outlined density="comfortable"></v-select>
         <v-switch v-model="installToDiskDialog.extra_partition" :label="$t('extra partition')" inset color="green" density="compact" hide-details="auto"></v-switch>
-        <v-switch v-model="installToDiskDialog.restore" :label="$t('restore from file')" inset color="green" density="compact" hide-details="auto"></v-switch>
-        <v-text-field
-          v-if="installToDiskDialog.restore"
+        <v-switch v-model="installToDiskDialog.restore" :label="$t('restore from file (mos backup)')" inset color="green" density="compact" hide-details="auto"></v-switch>
+        <v-select
+          v-if="bootBackupFiles.length > 0 && bootBackupFiles[0] !== '' && installToDiskDialog.restore"
           v-model="installToDiskDialog.tar_file"
+          :items="bootBackupFiles"
           :label="$t('tar file')"
           outlined
+          density="comfortable"
           class="mt-4"
           hide-details="auto"
-          append-inner-icon="mdi-folder"
-          @click:append-inner="
-            openFsDialog((item) => {
-              installToDiskDialog.tar_file = item.path;
-            })
-          "
-        ></v-text-field>
+        ></v-select>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -103,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, onUnmounted } from 'vue';
+import { ref, onMounted, reactive, onUnmounted, watch } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import FileEditDialog from '@/components/fileEditDialog.vue';
@@ -122,12 +118,20 @@ const installToDiskDialog = reactive({
   restore: false,
   tar_file: '',
 });
+const bootBackupFiles = ref([]);
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);
 
 onMounted(() => {
   getUnassignedDisks();
 });
+
+const openInstallToDiskDialog = async () => {
+  installToDiskDialog.value = true;
+  overlay.value = true;
+  await getBootBackupFiles();
+  overlay.value = false;
+};
 
 const openFsDialog = (cb) => {
   fsDialogCallback.value = cb;
@@ -192,6 +196,26 @@ const getUnassignedDisks = async () => {
     }
     const result = await res.json();
     unassignedDisks.value = result.unassignedDisks || [];
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
+const getBootBackupFiles = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/bootbackupfiles', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('boot backup files could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    const result = await res.json();
+    bootBackupFiles.value = Array.isArray(result) ? result : [];
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

@@ -1583,7 +1583,7 @@
   "are you sure you want to delete this initiator": "Bist du sicher, dass du diesen Initiator löschen möchtest",
   "iscsi target could not be saved": "iSCSI Ziel konnte nicht gespeichert werden",
   "channel is being switched from": "Kanal wird gewechselt von",
-  "restore from file": "Von Datei wiederherstellen",
+  "restore from file (mos backup)": "Von Datei wiederherstellen (MOS Backup)",
   "tar file": "Tar Datei",
   "select file": "Datei auswählen",
   "supporter": "Unterstützer",
@@ -1609,5 +1609,6 @@
   "disks could not be put to sleep": "Festplatten konnten nicht in den Ruhezustand versetzt werden",
   "disks successfully put to sleep": "Festplatten erfolgreich in den Ruhezustand versetzt",
   "disks could not be woken up": "Festplatten konnten nicht aufgeweckt werden",
-  "disks successfully woken up": "Festplatten erfolgreich aufgeweckt"
+  "disks successfully woken up": "Festplatten erfolgreich aufgeweckt",
+  "boot backup files could not be loaded": "Boot Backup Dateien konnten nicht geladen werden"
 }
