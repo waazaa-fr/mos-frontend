@@ -144,8 +144,8 @@
                       </template>
                       <v-list-item-title>{{ $t('nonraid schedules') }}</v-list-item-title>
                     </v-list-item>
-                    <v-divider v-if="pool.type === 'multi' || pool.type === 'single'"></v-divider>
-                    <v-list-item v-if="pool.type === 'multi' || pool.type === 'single'" @click="openMultiSchedulesDialog(pool)">
+                    <v-divider v-if="pool.type === 'xfs' || pool.type === 'btrfs'"></v-divider>
+                    <v-list-item v-if="pool.type === 'xfs' || pool.type === 'btrfs'" @click="openMultiSchedulesDialog(pool)">
                       <template #prepend>
                         <v-icon size="18">mdi-harddisk-plus</v-icon>
                       </template>
@@ -904,39 +904,47 @@
   </v-dialog>
 
   <!-- Multi Schedules Dialog -->
-    <v-dialog v-model="multiSchedulesDialog.value" max-width="400">
-      <v-card class="pa-0" :title="t('btrfs schedules')" prepend-icon="mdi-clock-outline" style="max-height: 60vh; display: flex; flex-direction: column">
-        <v-card-text style="overflow: auto">
-          <v-switch v-model="multiSchedulesDialog.scrub.enabled" :label="$t('scrub enabled')" hide-details="auto" density="compact" color="green" inset />
-          <v-text-field
-            v-model="multiSchedulesDialog.scrub.schedule"
-            :label="$t('scrub schedule (cron)')"
-            hide-details="auto"
-            class="mt-2 mb-4"
-            append-inner-icon="mdi-calendar-clock"
-            @click:append-inner="openCronDialog(multiSchedulesDialog.scrub.schedule, (schedule) => (multiSchedulesDialog.scrub.schedule = schedule))"
-            v-if="multiSchedulesDialog.scrub.enabled"
-          />
-          <v-switch v-model="multiSchedulesDialog.balance.enabled" :label="$t('balance enabled')" hide-details="auto" density="compact" color="green" inset />
-          <v-text-field
-            v-model="multiSchedulesDialog.balance.schedule"
-            :label="$t('balance schedule (cron)')"
-            hide-details="auto"
-            class="mt-2 mb-4"
-            append-inner-icon="mdi-calendar-clock"
-            @click:append-inner="openCronDialog(multiSchedulesDialog.balance.schedule, (schedule) => (multiSchedulesDialog.balance.schedule = schedule))"
-            v-if="multiSchedulesDialog.balance.enabled"
-          />
-        </v-card-text>
-        <v-divider />
-        <v-card-actions style="flex-shrink: 0">
-          <v-btn @click="multiSchedulesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+  <v-dialog v-model="multiSchedulesDialog.value" max-width="400">
+    <v-card class="pa-0" :title="t('btrfs schedules')" prepend-icon="mdi-clock-outline" style="max-height: 60vh; display: flex; flex-direction: column">
+      <v-card-text style="overflow: auto">
+        <v-switch v-model="multiSchedulesDialog.scrub.enabled" :label="$t('scrub enabled')" hide-details="auto" density="compact" color="green" inset />
+        <v-text-field
+          v-model="multiSchedulesDialog.scrub.schedule"
+          :label="$t('scrub schedule (cron)')"
+          hide-details="auto"
+          class="mt-2 mb-4"
+          append-inner-icon="mdi-calendar-clock"
+          @click:append-inner="openCronDialog(multiSchedulesDialog.scrub.schedule, (schedule) => (multiSchedulesDialog.scrub.schedule = schedule))"
+          v-if="multiSchedulesDialog.scrub.enabled"
+        />
+        <v-switch
+          v-if="multiSchedulesDialog.pool.type === 'btrfs' && multiSchedulesDialog.pool.devices.length > 1"
+          v-model="multiSchedulesDialog.balance.enabled"
+          :label="$t('balance enabled')"
+          hide-details="auto"
+          density="compact"
+          color="green"
+          inset
+        />
+        <v-text-field
+          v-model="multiSchedulesDialog.balance.schedule"
+          :label="$t('balance schedule (cron)')"
+          hide-details="auto"
+          class="mt-2 mb-4"
+          append-inner-icon="mdi-calendar-clock"
+          @click:append-inner="openCronDialog(multiSchedulesDialog.balance.schedule, (schedule) => (multiSchedulesDialog.balance.schedule = schedule))"
+          v-if="multiSchedulesDialog.balance.enabled"
+        />
+      </v-card-text>
+      <v-divider />
+      <v-card-actions style="flex-shrink: 0">
+        <v-btn @click="multiSchedulesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="saveMultiSchedules(multiSchedulesDialog.pool.id, multiSchedulesDialog.scrub, multiSchedulesDialog.balance)">
           {{ $t('save') }}
         </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
   <!-- Add Non-Raid Devices Dialog -->
   <v-dialog v-model="addNonRaidDeviceDialog.value" max-width="600">
@@ -1198,11 +1206,11 @@ const multiSchedulesDialog = reactive({
   scrub: {
     enabled: false,
     schedule: '0 4 * * WED',
-   },
-   balance: {
-     enabled: false,
-     schedule: '0 5 * * SUN'
-   }
+  },
+  balance: {
+    enabled: false,
+    schedule: '0 5 * * SUN',
+  },
 });
 
 const addNonRaidDeviceDialog = reactive({
