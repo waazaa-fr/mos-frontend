@@ -1633,5 +1633,7 @@
   "errors": "Errors",
   "create vpool": "Create VPool",
   "vpool": "VPool",
-  "acknowledge": "Acknowledge"
+  "acknowledge": "Acknowledge",
+  "recommended repositories": "Recommended Repositories",
+  "could not get recommended repositories": "Could not get recommended repositories"
 }

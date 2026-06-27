@@ -289,7 +289,10 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" class="d-flex justify-end mt-2">
+            <v-col cols="12" class="d-flex flex-column gap-2 mt-2 mb-0" style="align-items: flex-end">
+              <v-btn color="primary" variant="text" prepend-icon="mdi-plus" @click="openRecommendedReposDialog()">
+                {{ $t('recommended repositories') }}
+              </v-btn>
               <v-btn color="primary" variant="text" prepend-icon="mdi-plus" @click="mosHubRepositoriesDialog.repositories.push('')">
                 {{ $t('add repository') }}
               </v-btn>
@@ -417,6 +420,28 @@
     </v-card>
   </v-dialog>
 
+  <!-- Pick recommended repos -->
+  <v-dialog v-model="recommendedReposDialog.value" persistent max-width="600px">
+    <v-card>
+      <v-card-title>{{ $t('recommended repositories') }}</v-card-title>
+      <v-card-text>
+        <v-list>
+          <v-list-item v-for="repo in recommendedRepos" :key="repo" @click="toggleRecommendedRepo(repo)">
+            <template #append>
+              <v-icon v-if="selectedRecommendedRepos.includes(repo)" color="success">mdi-check-circle</v-icon>
+            </template>
+            <v-list-item-title>{{ repo }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="recommendedReposDialog.value = false">{{ $t('close') }}</v-btn>
+        <v-btn text color="primary" @click="saveSelectedRecommendedRepos()">{{ $t('save') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button with Menu -->
   <v-menu location="top">
     <template v-slot:activator="{ props }">
@@ -477,6 +502,12 @@ const errorMsg = ref('');
 const releasesItems = ref([]);
 const mosHub = ref([]);
 const mosHubCount = ref(0);
+const recommendedRepos = ref([]);
+const selectedRecommendedRepos = ref([]);
+const recommendedReposDialog = reactive({
+  value: false,
+  loading: false,
+});
 
 const mosHubRepositoriesDialog = reactive({
   value: false,
@@ -760,6 +791,47 @@ const openPluginInstallDialog = (tpl) => {
   releasesItems.value = [];
   installDialog.release = null;
   getPluginReleases(tpl?.repository);
+};
+const openRecommendedReposDialog = async () => {
+  recommendedReposDialog.value = true;
+  recommendedReposDialog.loading = true;
+  await getRecommendedRepos();
+  selectedRecommendedRepos.value = [...mosHubRepositoriesDialog.repositories];
+  recommendedReposDialog.loading = false;
+};
+
+const getRecommendedRepos = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/hub/recommended', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('could not get recommended repositories')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    recommendedRepos.value = await res.json();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
+const toggleRecommendedRepo = (repoName) => {
+  const index = selectedRecommendedRepos.value.indexOf(repoName);
+  if (index === -1) {
+    selectedRecommendedRepos.value.push(repoName);
+  } else {
+    selectedRecommendedRepos.value.splice(index, 1);
+  }
+};
+
+const saveSelectedRecommendedRepos = () => {
+  mosHubRepositoriesDialog.repositories = [...selectedRecommendedRepos.value];
+  recommendedReposDialog.value = false;
 };
 </script>
 
