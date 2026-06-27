@@ -60,14 +60,20 @@
             <v-select v-model="selectedTemplate" :items="composeTemplates" :label="$t('template')" @update:modelValue="getComposeTemplate" hide-details="auto"></v-select>
             <v-divider class="my-4"></v-divider>
             <v-text-field v-model="composeStack.name" :label="$t('stack name')" required></v-text-field>
-            <v-textarea v-model="composeStack.yaml" :label="$t('compose yaml')" rows="10" required hide-details="auto"></v-textarea>
+            <div class="mb-4">
+              <label class="text-body2" style="display: block; margin-bottom: 8px; color: rgba(0, 0, 0, 0.6)">{{ $t('compose yaml') }}</label>
+              <div ref="yamlEditorContainer" style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px; overflow: hidden;"></div>
+            </div>
             <div class="d-flex mb-2 mt-2">
               <v-btn variant="text" size="small" class="pa-0" style="min-width: 0;" @click="sidePanel.open = true">
                 <v-icon size="18" class="mr-1">mdi-eye</v-icon>
                 {{ $t('show used ports') }}
               </v-btn>
             </div>
-            <v-textarea v-model="composeStack.env" :label="$t('environment variables')" rows="10"></v-textarea>
+            <div class="mb-4 mt-4">
+              <label class="text-body2" style="display: block; margin-bottom: 8px; color: rgba(0, 0, 0, 0.6)">{{ $t('environment variables') }}</label>
+              <div ref="envEditorContainer" style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px; overflow: hidden;"></div>
+            </div>
             <v-text-field v-model="composeStack.icon" :label="$t('icon url')"></v-text-field>
             <v-text-field v-model="composeStack.web_ui_url" :label="$t('web ui url')"></v-text-field>
             <v-switch :label="$t('no autoupdate')" v-model="composeStack.no_autoupdate" inset color="green" density="compact" hide-details="auto"></v-switch>
@@ -136,9 +142,13 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import { EditorState } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
+import { basicSetup } from 'codemirror';
+import { yaml } from '@codemirror/lang-yaml';
 import { useOverlay } from '@/composables/useOverlay';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
@@ -149,6 +159,10 @@ const router = useRouter();
 const { overlay } = useOverlay();
 const sidePanel = ref({ open: false });
 const usedDockerPorts = ref([]);
+const yamlEditorContainer = ref(null);
+const envEditorContainer = ref(null);
+let yamlEditor = null;
+let envEditor = null;
 
 const props = defineProps({
   template: String,
@@ -169,6 +183,8 @@ const selectedTemplate = ref('');
 const composeTemplates = ref([]);
 
 onMounted(() => {
+  initYamlEditor();
+  initEnvEditor();
   getComposeTemplateNames();
   getDockerPorts();
   if (props.template || props.yaml || props.env || props.web_ui_url) {
@@ -186,6 +202,71 @@ const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDocker
   onSuccessSnackbar: showSnackbarSuccess,
   onCompleted: async () => {},
 });
+
+const initYamlEditor = () => {
+  if (!yamlEditorContainer.value) return;
+
+  const startState = EditorState.create({
+    doc: composeStack.yaml,
+    extensions: [
+      basicSetup,
+      yaml(),
+      EditorView.updateListener.of((update) => {
+        if (update.docChanged) {
+          composeStack.yaml = update.state.doc.toString();
+        }
+      }),
+    ],
+  });
+
+  yamlEditor = new EditorView({
+    state: startState,
+    parent: yamlEditorContainer.value,
+  });
+};
+
+const initEnvEditor = () => {
+  if (!envEditorContainer.value) return;
+
+  const startState = EditorState.create({
+    doc: composeStack.env,
+    extensions: [
+      basicSetup,
+      EditorView.updateListener.of((update) => {
+        if (update.docChanged) {
+          composeStack.env = update.state.doc.toString();
+        }
+      }),
+    ],
+  });
+
+  envEditor = new EditorView({
+    state: startState,
+    parent: envEditorContainer.value,
+  });
+};
+
+const updateYamlEditor = (newValue) => {
+  if (yamlEditor) {
+    const changes = yamlEditor.state.changes({
+      from: 0,
+      to: yamlEditor.state.doc.length,
+      insert: newValue,
+    });
+    yamlEditor.dispatch({ changes });
+  }
+};
+
+const updateEnvEditor = (newValue) => {
+  if (envEditor) {
+    const changes = envEditor.state.changes({
+      from: 0,
+      to: envEditor.state.doc.length,
+      insert: newValue,
+    });
+    envEditor.dispatch({ changes });
+  }
+};
 
 const createComposeStack = async () => {
   sendDockerWSCommand('compose-create', composeStack);
@@ -212,7 +293,9 @@ const getComposeHubTemplate = async (template, yaml, env, web_ui_url, no_autoupd
     const result = await res.json();
     composeStack.name = result.name || '';
     composeStack.yaml = result.yaml || '';
+    updateYamlEditor(composeStack.yaml);
     composeStack.env = result.env || '';
+    updateEnvEditor(composeStack.env);
     composeStack.icon = result.icon || '';
     composeStack.web_ui_url = result.web_ui_url || '';
     composeStack.no_autoupdate = result.no_autoupdate || false;
@@ -264,7 +347,9 @@ const getComposeTemplate = async (templateName) => {
     const result = await res.json();
     composeStack.name = result.name || '';
     composeStack.yaml = result.yaml || '';
+    updateYamlEditor(composeStack.yaml);
     composeStack.env = result.env || '';
+    updateEnvEditor(composeStack.env);
     composeStack.icon = result.icon || '';
     composeStack.web_ui_url = result.web_ui_url || '';
     composeStack.no_autoupdate = result.no_autoupdate || false;
@@ -314,3 +399,17 @@ const getDockerPorts = async () => {
 };
 
 </script>
+
+<style scoped>
+:deep(.cm-editor) {
+  height: 300px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+:deep(.cm-gutters) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+</style>

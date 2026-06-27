@@ -1633,5 +1633,7 @@
   "errors": "Fehler",
   "create vpool": "VPool anlegen",
   "vpool": "VPool",
-  "acknowledge": "Bestätigen"
+  "acknowledge": "Bestätigen",
+  "recommended repositories": "Empfohlene Repositories",
+  "could not get recommended repositories": "Empfohlene Repositories konnten nicht abgerufen werden"
 }

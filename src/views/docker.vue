@@ -766,11 +766,17 @@
       <v-card-text class="pa-0">
         <div style="max-height: 60vh; overflow-y: auto; padding: 16px; padding-bottom: 32px">
           <v-text-field v-model="editComposeStackDialog.name" :label="$t('stack name')" readonly></v-text-field>
-          <v-textarea v-model="editComposeStackDialog.yaml" :label="$t('compose yaml')" rows="10" required></v-textarea>
-          <v-textarea v-model="editComposeStackDialog.env" :label="$t('environment variables')" rows="10"></v-textarea>
-          <v-text-field v-model="editComposeStackDialog.icon" :label="$t('icon url')"></v-text-field>
+          <div class="mb-4">
+            <label class="text-body2" style="display: block; margin-bottom: 8px; color: rgba(0, 0, 0, 0.6)">{{ $t('compose yaml') }}</label>
+            <div ref="editDialogYamlEditorContainer" style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px; overflow: hidden;"></div>
+          </div>
+          <div class="mb-4 mt-4">
+            <label class="text-body2" style="display: block; margin-bottom: 8px; color: rgba(0, 0, 0, 0.6)">{{ $t('environment variables') }}</label>
+            <div ref="editDialogEnvEditorContainer" style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px; overflow: hidden;"></div>
+          </div>
+          <v-text-field v-model="editComposeStackDialog.icon" :label="$t('icon url')" class="mt-4"></v-text-field>
           <v-text-field v-model="editComposeStackDialog.webui" :label="$t('web ui url')"></v-text-field>
-          <v-switch :label="$t('no autoupdate')" v-model="editComposeStackDialog.no_autoupdate" inset color="green" density="compact"></v-switch>
+          <v-switch :label="$t('no autoupdate')" v-model="editComposeStackDialog.no_autoupdate" inset color="green" density="compact" hide-details="auto"></v-switch>
         </div>
       </v-card-text>
       <v-divider />
@@ -928,6 +934,10 @@ import { useI18n } from 'vue-i18n';
 import { openTerminalPopup } from '@/composables/terminalpopup';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
 import DockerInfoDialog from '@/components/dockerInfoDialog.vue';
+import { EditorState } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
+import { basicSetup } from 'codemirror';
+import { yaml } from '@codemirror/lang-yaml';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -985,6 +995,10 @@ const editComposeStackDialog = reactive({
   webui: '',
   no_autoupdate: false,
 });
+const editDialogYamlEditorContainer = ref(null);
+const editDialogEnvEditorContainer = ref(null);
+let editDialogYamlEditor = null;
+let editDialogEnvEditor = null;
 const removeComposeStackDialog = reactive({
   value: false,
   name: '',
@@ -2092,6 +2106,71 @@ const closeRemoveComposeStackDialog = () => {
   removeComposeStackDialog.value = false;
   removeComposeStackDialog.name = '';
 };
+const initEditDialogYamlEditor = () => {
+  if (!editDialogYamlEditorContainer.value) return;
+
+  const startState = EditorState.create({
+    doc: editComposeStackDialog.yaml,
+    extensions: [
+      basicSetup,
+      yaml(),
+      EditorView.updateListener.of((update) => {
+        if (update.docChanged) {
+          editComposeStackDialog.yaml = update.state.doc.toString();
+        }
+      }),
+    ],
+  });
+
+  editDialogYamlEditor = new EditorView({
+    state: startState,
+    parent: editDialogYamlEditorContainer.value,
+  });
+};
+
+const initEditDialogEnvEditor = () => {
+  if (!editDialogEnvEditorContainer.value) return;
+
+  const startState = EditorState.create({
+    doc: editComposeStackDialog.env,
+    extensions: [
+      basicSetup,
+      EditorView.updateListener.of((update) => {
+        if (update.docChanged) {
+          editComposeStackDialog.env = update.state.doc.toString();
+        }
+      }),
+    ],
+  });
+
+  editDialogEnvEditor = new EditorView({
+    state: startState,
+    parent: editDialogEnvEditorContainer.value,
+  });
+};
+
+const updateEditDialogYamlEditor = (newValue) => {
+  if (editDialogYamlEditor) {
+    const changes = editDialogYamlEditor.state.changes({
+      from: 0,
+      to: editDialogYamlEditor.state.doc.length,
+      insert: newValue,
+    });
+    editDialogYamlEditor.dispatch({ changes });
+  }
+};
+
+const updateEditDialogEnvEditor = (newValue) => {
+  if (editDialogEnvEditor) {
+    const changes = editDialogEnvEditor.state.changes({
+      from: 0,
+      to: editDialogEnvEditor.state.doc.length,
+      insert: newValue,
+    });
+    editDialogEnvEditor.dispatch({ changes });
+  }
+};
+
 const openEditComposeStackDialog = async (name) => {
   let stack = await getComposeStack(name);
   editComposeStackDialog.value = true;
@@ -2101,5 +2180,23 @@ const openEditComposeStackDialog = async (name) => {
   editComposeStackDialog.icon = stack.icon;
   editComposeStackDialog.webui = stack.webui || '';
   editComposeStackDialog.no_autoupdate = stack.no_autoupdate || false;
+  
+  await new Promise(resolve => setTimeout(resolve, 100));
+  initEditDialogYamlEditor();
+  initEditDialogEnvEditor();
 };
 </script>
+
+<style scoped>
+:deep(.cm-editor) {
+  height: 200px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+:deep(.cm-gutters) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+</style>
