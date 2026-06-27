@@ -1123,12 +1123,12 @@
         </template>
         <v-list-item-title>{{ $t('create pool') }}</v-list-item-title>
       </v-list-item>
-      <v-list-item @click="openCreateVPoolDialog()">
+      <!--<v-list-item @click="openCreateVPoolDialog()">
         <template v-slot:prepend>
           <v-icon>mdi-plus</v-icon>
         </template> 
         <v-list-item-title>{{ $t('create vpool') }}</v-list-item-title>
-      </v-list-item>
+      </v-list-item>-->
     </v-list>
     
   </v-menu>
