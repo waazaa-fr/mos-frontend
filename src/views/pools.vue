@@ -1289,7 +1289,6 @@ const multiSchedulesDialog = reactive({
     schedule: '0 5 * * SUN',
   },
 });
-
 const addNonRaidDeviceDialog = reactive({
   value: false,
   pool: null,
@@ -1337,6 +1336,22 @@ const usageAlertsDialog = reactive({
     warning: 85,
     alert: 90,
   },
+});
+const vpools = reactive({
+  "name": "mediapath",
+  "paths": [
+    "/mnt/disk1/media",
+    "/mnt/disk2/media"
+  ],
+  "automount": true,
+  "comment": "",
+  "config": {
+    "policies": {
+      "create": "mspmfs",
+      "search": "ff"
+    },
+    "shared": false
+  }
 });
 
 onMounted(async () => {
