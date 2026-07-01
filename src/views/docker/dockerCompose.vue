@@ -61,7 +61,7 @@
             <v-divider class="my-4"></v-divider>
             <v-text-field v-model="composeStack.name" :label="$t('stack name')" required></v-text-field>
             <div class="mb-4">
-              <label class="text-body2" style="display: block; margin-bottom: 8px; color: rgba(0, 0, 0, 0.6)">{{ $t('compose yaml') }}</label>
+              <v-label class="text-body2" style="display: block;">{{ $t('compose yaml') }}</v-label>
               <div ref="yamlEditorContainer" style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px; overflow: hidden;"></div>
             </div>
             <div class="d-flex mb-2 mt-2">
@@ -71,7 +71,7 @@
               </v-btn>
             </div>
             <div class="mb-4 mt-4">
-              <label class="text-body2" style="display: block; margin-bottom: 8px; color: rgba(0, 0, 0, 0.6)">{{ $t('environment variables') }}</label>
+              <v-label class="text-body2" style="display: block;">{{ $t('environment variables') }}</v-label>
               <div ref="envEditorContainer" style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px; overflow: hidden;"></div>
             </div>
             <v-text-field v-model="composeStack.icon" :label="$t('icon url')"></v-text-field>
@@ -402,11 +402,13 @@ const getDockerPorts = async () => {
 
 <style scoped>
 :deep(.cm-editor) {
-  height: 300px;
+  height: 200px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
   font-size: 13px;
   font-family: 'Roboto Mono', monospace;
+  resize: vertical;
+  overflow: auto !important;
 }
 
 :deep(.cm-gutters) {
