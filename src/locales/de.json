@@ -1635,5 +1635,6 @@
   "vpool": "VPool",
   "acknowledge": "Bestätigen",
   "recommended repositories": "Empfohlene Repositories",
-  "could not get recommended repositories": "Empfohlene Repositories konnten nicht abgerufen werden"
+  "could not get recommended repositories": "Empfohlene Repositories konnten nicht abgerufen werden",
+  "reinstall": "Neu installieren"
 }

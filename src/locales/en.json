@@ -1635,5 +1635,6 @@
   "vpool": "VPool",
   "acknowledge": "Acknowledge",
   "recommended repositories": "Recommended Repositories",
-  "could not get recommended repositories": "Could not get recommended repositories"
+  "could not get recommended repositories": "Could not get recommended repositories",
+  "reinstall": "Reinstall"
 }
