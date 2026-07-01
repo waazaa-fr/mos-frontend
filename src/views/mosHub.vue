@@ -194,6 +194,9 @@
                     <v-spacer />
                     <v-divider />
                     <v-card-actions style="flex: 0 0 auto; gap: 4px; padding: 8px">
+                      <v-chip v-if="tpl.installed" color="secondary" size="small">
+                        {{ $t('installed') }}
+                      </v-chip>
                       <v-spacer />
                       <v-btn color="secondary" :href="tpl.website" target="_blank" v-if="tpl.website" prepend-icon="mdi-web" size="small">
                         {{ $t('webpage') }}
@@ -210,7 +213,7 @@
                         "
                         :disabled="!mosServices.docker.running"
                       >
-                        {{ $t('install') }}
+                        {{ tpl.installed ? $t('reinstall') : $t('install') }}
                       </v-btn>
                       <v-btn
                         v-else-if="tpl.type == 'compose' && mosServices && mosServices.docker"
